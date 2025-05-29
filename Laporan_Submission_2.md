@@ -86,9 +86,9 @@ Untuk mewujudkan tujuan proyek, pendekatan yang digunakan adalah sebagai berikut
 3. Membangun mode **Collaborative Filtering (CF)** menggunakan embedding neural network (RecommenderNet) untuk mempelajari pola interaksi pengguna terhadap film berdasarkan histori rating.
 4. Membangun model **Hybrid** untk optimalisasi model gabungan.
 5. Menggunakan metrik evaluasi:  
-  - **Mean Similarity (ILS):** Menilai homogenitas antar film dalam daftar rekomendasi.
-  - **Diversity:** Mengukur variasi genre dan konten antar film yang direkomendasikan.
-  - **Coverage:** Menghitung proporsi film dari katalog yang berhasil direkomendasikan ke minimal satu pengguna.
+      - **Mean Similarity (ILS):** Menilai homogenitas antar film dalam daftar rekomendasi.
+      - **Diversity:** Mengukur variasi genre dan konten antar film yang direkomendasikan.
+      - **Coverage:** Menghitung proporsi film dari katalog yang berhasil direkomendasikan ke minimal satu pengguna.
 6. Menambahkan **penalti popularitas** pada film populer untuk meningkatkan eksplorasi terhadap film kurang dikenal yang tetap relevan.
 7. Melakukan **reranking** dengan penalti genre serupa untuk meningkatkan diversity dalam daftar rekomendasi, sehingga pengguna mendapatkan kombinasi film yang tidak hanya relevan, tapi juga segar dan bervariasi, memperkaya pengalaman eksplorasi konten.
 
@@ -148,13 +148,15 @@ EDA dilakukan menggunakan visualisasi distribusi, korelasi antar fitur, dan dete
   | 4.5    | 2,200,539  |
   | 5.0    | 3,612,474  |
 
+![distribusi_rating](https://github.com/user-attachments/assets/8dfa1b82-1055-4b3c-b6c5-2bdf324bef52)
+
   - Grafik menunjukkan distribusi rating film dari dataset. Beberapa poin penting yang dapat diamati:
     - Rentang rating berkisar antara 0 hingga 5.
     - Distribusi cenderung menumpuk pada rating tinggi seperti 4 dan 5, menunjukkan bahwa banyak film menerima penilaian positif dari pengguna.
     - Terdapat fluktuasi yang tajam pada kurva KDE (Kernel Density Estimation), kemungkinan disebabkan oleh jumlah data yang sangat besar dan outlier.
     - Nilai puncak tertinggi berada pada rating 4, yang mengindikasikan bahwa mayoritas pengguna memberikan rating yang baik.
 
-    Insight: Secara umum, film dalam dataset ini dinilai cukup baik oleh pengguna. Namun, diperlukan pemeriksaan lebih lanjut apakah ada bias pada sistem penilaian (misalnya pengguna cenderung hanya memberi rating tinggi).
+    **Insight** : Secara umum, film dalam dataset ini dinilai cukup baik oleh pengguna. Namun, diperlukan pemeriksaan lebih lanjut apakah ada bias pada sistem penilaian (misalnya pengguna cenderung hanya memberi rating tinggi).
 
 - Jumlah Rating per Film
 
@@ -185,20 +187,18 @@ EDA dilakukan menggunakan visualisasi distribusi, korelasi antar fitur, dan dete
 
   - Rating rata-rata yang tinggi **dan** jumlah rating yang besar menjadi indikasi kuat bahwa film tersebut **populer dan berkualitas**. Ini dapat dimanfaatkan dalam sistem rekomendasi dengan pendekatan **popularity-based hybrid filtering**.
 
-
 - Distribusi Genre Film
 
-  - Genre film diekstrak dari kolom `genres` dan dihitung frekuensinya setelah eksplosi nilai multigenre.
-  - Genre paling umum:
+- Genre film diekstrak dari kolom `genres` dan dihitung frekuensinya setelah eksplosi nilai multigenre.
+- Genre paling umum:
     - **Drama**
     - **Comedy**
     - **Action**
 
--Grafik batang menunjukkan sebaran jumlah film berdasarkan genre. Berikut adalah temuan utama:
-  - Drama merupakan genre dengan jumlah film terbanyak, diikuti oleh Comedy, Thriller, dan Romance.
-  - Genre seperti Musical, Film-Noir, dan IMAX memiliki jumlah film yang jauh lebih sedikit.
-  - Terdapat kategori “(no genres listed)” yang menunjukkan adanya film tanpa label genre — ini perlu ditangani dalam tahap preprocessing.
-
+- Grafik batang menunjukkan sebaran jumlah film berdasarkan genre. Berikut adalah temuan utama:
+      - Drama merupakan genre dengan jumlah film terbanyak, diikuti oleh Comedy, Thriller, dan Romance.
+      - Genre seperti Musical, Film-Noir, dan IMAX memiliki jumlah film yang jauh lebih sedikit.
+      - Terdapat kategori “(no genres listed)” yang menunjukkan adanya film tanpa label genre — ini perlu ditangani dalam tahap preprocessing.
 
 - ✅ Insight Keseluruhan
   - Rating cenderung positif dengan dominasi skor 3.0–4.0.
@@ -208,8 +208,8 @@ EDA dilakukan menggunakan visualisasi distribusi, korelasi antar fitur, dan dete
 
   Insight ini sangat berguna untuk membangun sistem rekomendasi yang **terpersonalisasi**, baik berbasis **interaksi pengguna** maupun **konten film**.
 
-![Distribusi Genre Film](image.png)
-![Distribusi rating](image-1.png)
+![distribusi_genre_film](https://github.com/user-attachments/assets/60b2b2d9-07a2-440a-be3d-e48cbca38880)
+
 
 **Multivariate Analysis**
 Beberapa hal yang dilihat pada tahap ini :
@@ -225,7 +225,7 @@ Pada tahap ini, dilakukan beberapa proses penting untuk menyiapkan data sebelum 
 
 1. Penggabungan Data
 
-Data ratings_df dan movies_df digabungkan berdasarkan kolom movieId menggunakan metode merge dengan join tipe left. Tujuannya agar setiap rating yang diberikan oleh pengguna dapat dihubungkan dengan informasi film seperti judul dan genre.
+    Data ratings_df dan movies_df digabungkan berdasarkan kolom movieId menggunakan metode merge dengan join tipe left. Tujuannya agar setiap rating yang diberikan oleh pengguna dapat dihubungkan dengan informasi film seperti judul dan genre.
 
  ```python
 merged_df = pd.merge(ratings_df, movies_df, on='movieId', how='left')
@@ -233,7 +233,7 @@ merged_df = pd.merge(ratings_df, movies_df, on='movieId', how='left')
 
 2. Pengecekan Missing Value dan Duplikasi
 
-Dari pengecekan dapat dilihat tidak ada missing value dan duplikasi data terutama pada fitur userId dan movieId yang nantinya diutamakan untuk pembuatan model.
+    Dari pengecekan dapat dilihat tidak ada missing value dan duplikasi data terutama pada fitur userId dan movieId yang nantinya diutamakan untuk pembuatan model.
 
  ```python
 missing_percentage = merged_df.isnull().mean() * 100
@@ -243,7 +243,7 @@ duplicate_ratings = merged_df.duplicated(subset=['userId', 'movieId']).sum()
 
 3. Sampling Data
 
-Dataset asli memiliki ukuran yang sangat besar, sehingga untuk efisiensi komputasi dan keterbatasan memori (RAM) di lingkungan pengolahan seperti Google Colab ataupun kaggle, dilakukan sampling acak sebanyak 200.000. Sampling ini dilakukan untuk menjaga agar proses pelatihan dan pengujian model tetap berjalan lancar dan efisien tanpa mengorbankan representasi data secara signifikan. Sampel ini cukup besar untuk mewakili variasi data asli.
+    Dataset asli memiliki ukuran yang sangat besar, sehingga untuk efisiensi komputasi dan keterbatasan memori (RAM) di lingkungan pengolahan seperti Google Colab ataupun kaggle, dilakukan sampling acak sebanyak 200.000. Sampling ini dilakukan untuk menjaga agar proses pelatihan dan pengujian model tetap berjalan lancar dan efisien tanpa mengorbankan representasi data secara signifikan. Sampel ini cukup besar untuk mewakili variasi data asli.
 
  ```python
 sample_df = merged_df.sample(n=200_000, random_state=42).copy()
@@ -251,7 +251,7 @@ sample_df = merged_df.sample(n=200_000, random_state=42).copy()
 
 4. Transformasi Fitur Genre
 
-Kolom genres yang berisi genre film dalam bentuk string dengan pemisah | diubah menjadi list menggunakan metode split, kemudian dipecah menjadi baris terpisah (explode). Langkah ini memudahkan analisis per genre dan pembuatan fitur berbasis genre.
+    Kolom genres yang berisi genre film dalam bentuk string dengan pemisah | diubah menjadi list menggunakan metode split, kemudian dipecah menjadi baris terpisah (explode). Langkah ini memudahkan analisis per genre dan pembuatan fitur berbasis genre.
 
  ```python
 sample_df['genres'] = sample_df['genres'].str.split('|')
@@ -260,7 +260,7 @@ genre_exploded = sample_df.explode('genres')
 
 5. Visualisasi Heatmap Distribusi Rating per Genre
 
-Visualisasi ini baru dapat dibuat dengan data sejumlah 200.000 yang sebelumnya error jika menggunakan keseluruhan data. Untuk melihat distribusi rating per genre, dilakukan kategorisasi rating ke dalam rentang (bins) dan dibuat pivot table untuk jumlah rating per kategori rating dan genre. Visualisasi heatmap membantu melihat pola distribusi.
+    Visualisasi ini baru dapat dibuat dengan data sejumlah 200.000 yang sebelumnya error jika menggunakan keseluruhan data. Untuk melihat distribusi rating per genre, dilakukan kategorisasi rating ke dalam rentang (bins) dan dibuat pivot table untuk jumlah rating per kategori rating dan genre. Visualisasi heatmap membantu melihat pola distribusi.
 
  ```python
   genre_exploded['rating_category'] = pd.cut(
@@ -284,7 +284,7 @@ Visualisasi ini baru dapat dibuat dengan data sejumlah 200.000 yang sebelumnya e
 
 6. Persiapan Data untuk Model Content-Based
 
-Untuk model content-based, hanya diperlukan kolom movieId, title, dan genres. Genre yang berlabel "(no genres listed)" diganti dengan string kosong agar tidak mengganggu proses analisis.
+    Untuk model content-based, hanya diperlukan kolom movieId, title, dan genres. Genre yang berlabel "(no genres listed)" diganti dengan string kosong agar tidak mengganggu proses analisis.
 
  ```python
 movie_content = movies_df[['movieId', 'title', 'genres']].copy()
@@ -293,7 +293,7 @@ movie_content['genres'] = movie_content['genres'].replace("(no genres listed)", 
 
 7. Encoding untuk Model Collaborative Filtering
 
-Model collaborative filtering membutuhkan data numerik untuk representasi pengguna dan film, juga userId dan movieId berupa angka besar (contoh: 125678, 90231). Model embedding membutuhkan input berupa integer mulai dari 0 hingga n. Oleh karena itu, userId dan movieId di-encode menjadi angka berurutan mulai dari 0. Hal ini agar model dapat memproses input dalam bentuk discrete integer index, yang merupakan format yang dibutuhkan oleh embedding layer dalam neural networks.
+    Model collaborative filtering membutuhkan data numerik untuk representasi pengguna dan film, juga userId dan movieId berupa angka besar (contoh: 125678, 90231). Model embedding membutuhkan input berupa integer mulai dari 0 hingga n. Oleh karena itu, userId dan movieId di-encode menjadi angka berurutan mulai dari 0. Hal ini agar model dapat memproses input dalam bentuk discrete integer index, yang merupakan format yang dibutuhkan oleh embedding layer dalam neural networks.
 
  ```python
 user_to_encoded = {x: i for i, x in enumerate(user_ids)}
@@ -301,7 +301,8 @@ movie_to_encoded = {x: i for i, x in enumerate(movie_ids)}
  ```
 
 8. Normalisasi Rating
-Rating dinormalisasi ke rentang 0 sampai 1 agar proses pelatihan model lebih stabil dan range rating lebih konsisten.
+   
+    Rating dinormalisasi ke rentang 0 sampai 1 agar proses pelatihan model lebih stabil dan range rating lebih konsisten.
 
  ```python
  min_rating = sample_df['rating'].min()
@@ -330,13 +331,13 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
 
     Content-Based Filtering (CBF) adalah salah satu pendekatan sistem rekomendasi yang menyarankan item kepada pengguna berdasarkan kemiripan konten item (misalnya rating film oleh pengguna) untuk menemukan pola kesamaan preferensi antar pengguna. Pendekatan dilakukan dengan melihat kemiripan konten (genre + judul) dengan film yang sudah ditonton dan disukai pengguna, yang dibuat dengan teknik **TF-IDF (Term Frequency-Inverse Document Frequency)**, dan kemudian mengukur kemiripannya dengan **cosine similarity**.
 
-    Arsitektur Model
+    **Arsitektur Model**
     - **TF-IDF Vectorizer** : Untuk mengubah fitur teks (genre + judul film) menjadi representasi numerik.
     - **Cosine Similarity** : Untuk mengukur kemiripan antar film berdasarkan vektor TF-IDF.
 
     **Proses Detail**
 
-    1. Membangun User-Item Matrix (TfidfVectorizer)
+   1. Membangun User-Item Matrix (TfidfVectorizer)
     
       Fitur teks dari film kemudian dikonversi menjadi vektor numerik menggunakan TF-IDF (Term Frequency-Inverse Document Frequency). Teknik ini menekankan kata-kata yang penting dalam konteks dokumen (film) tertentu namun jarang muncul secara global.
 
@@ -347,7 +348,8 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
       ```
       TF-IDF matrix yang terbentuk memiliki dimensi **[jumlah_film x jumlah_kata_unik]**, di mana setiap nilai menunjukkan pentingnya suatu kata dalam mendeskripsikan film tertentu.
 
-    2. Menghitung Kemiripan Antar Pengguna
+   2. Menghitung Kemiripan Antar Pengguna
+      
       Cosine similarity menghitung sudut antar dua vektor (semakin kecil sudut, semakin mirip). Jika dua film memiliki genre yang sangat mirip, maka nilai cosine similarity-nya mendekati 1. Matriks cosine_sim berbentuk **[jumlah_film x jumlah_film]** → setiap nilai menunjukkan tingkat kemiripan antar dua film. Untuk setiap pengguna, sistem mencari film yang paling mirip dengan film-film yang telah mereka tonton.
 
       ```python
@@ -358,7 +360,9 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
       columns=filtered_movies['title']
       )
       ```
-    3.  Output (Rekomendasi CBF)
+   3.  Output (Rekomendasi CBF)
+
+      ```python
 
       **Alur Hasil Rekomendasi**
       +----------------------+
@@ -426,6 +430,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
       | Selesai              |
       +----------------------+
 
+      ```
       - Penalti Popularitas untuk Novelty
         Penalti popularitas ini bertujuan untuk mengurangi dominasi film yang sangat populer agar rekomendasi tidak didominasi film mainstream saja. Skor prediksi similarity antar film dikurangi dengan nilai popularitas yang sudah dinormalisasi, dikalikan faktor alpha (misalnya 0.6). Sehingga film yang jarang ditonton atau kurang populer tetap punya peluang muncul dalam daftar rekomendasi. Ini meningkatkan nilai novelty karena rekomendasi menjadi lebih berisi film yang mungkin belum banyak diketahui pengguna namun tetap relevan.
 
@@ -482,7 +487,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
     - Cold-start untuk item baru: Jika item tidak memiliki deskripsi konten yang cukup, tidak dapat direkomendasikan.
     - Terbatas pada informasi yang tersedia: Jika data film kurang lengkap atau tidak representatif, hasil rekomendasi bisa kurang optimal.
 
-2. **Collaborative Filtering (CF)**
+3. **Collaborative Filtering (CF)**
     Model Collaborative Filtering yang dibangun pada proyek ini menggunakan pendekatan berbasis pembelajaran mendalam (Deep Learning), tepatnya melalui teknik Matrix Factorization dengan Embedding Layer pada framework TensorFlow. Tujuan utamanya adalah mempelajari hubungan implisit antara interaksi pengguna dengan item (film), untuk memprediksi rating atau preferensi pengguna terhadap film yang belum ditonton.
 
     **Arsitektur Model**
@@ -705,7 +710,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
     - Butuh banyak data: Performanya tinggi jika data interaksi pengguna cukup besar.
     - Kompleksitas komputasi: Lebih berat dibanding model tradisional seperti CBF sederhana.
 
-3. **Hybrid Model**
+4. **Hybrid Model**
 
   Hybrid recommendation menggabungkan dua pendekatan utama dalam sistem rekomendasi yaitu Content-Based Filtering (CBF) dan Collaborative Filtering (CF). Tujuannya adalah memanfaatkan kelebihan kedua metode agar menghasilkan rekomendasi yang lebih akurat, relevan, dan beragam.
 
