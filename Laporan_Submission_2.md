@@ -982,12 +982,3 @@ Untuk mewujudkan tujuan proyek, pendekatan yang digunakan adalah sebagai berikut
     Menjangkau item long-tail dalam katalog film.
   5. Penambahan penalti popularitas dan reranking genre meningkatkan novelty dan diversity, membuat daftar rekomendasi tidak hanya relevan tapi juga menarik dan tidak monoton.
   6. Secara keseluruhan, model ini efektif dalam mendukung pengguna menemukan film baru yang sesuai minat mereka, sekaligus memperkenalkan konten yang kurang populer namun relevan, meningkatkan user engagement dan eksplorasi katalog secara menyeluruh.
-
-## Struktur Submission
-
- ```
-app/
-├── Notebook.ipynb                         # Notebook utama berisi keseluruhan proses modeling, evaluasi, dan visualisasi
-├── Notebook.py                            # Versi Python script dari notebook (untuk reproducibility & deployment)
-├── Laporan_submission_2.md                # Laporan akhir berisi penjelasan pendekatan, arsitektur model, hasil evaluasi, dan insight
- ```
