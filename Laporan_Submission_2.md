@@ -13,13 +13,15 @@ Sebuah studi kualitatif terbaru yang diterbitkan oleh Springer (2024) menggarisb
 
 Dampak dari kondisi ini bukan hanya penurunan pengalaman pengguna, namun juga berpengaruh terhadap durasi interaksi, loyalitas terhadap platform, hingga pengambilan keputusan yang tergesa atau bahkan tidak jadi menonton sama sekali. Dalam konteks bisnis, ini dapat mengurangi retensi pengguna dan efisiensi rekomendasi konten.
 
+Meski algoritma personalisasi sudah diterapkan secara luas di platform streaming seperti Netflix, hasil studi Springer (2024) menunjukkan bahwa pengguna tetap merasa kewalahan dengan banyaknya pilihan yang disajikan. Hal ini menandakan bahwa sekadar menyajikan konten yang relevan tidak cukup; tantangan sebenarnya adalah bagaimana menyusun daftar rekomendasi yang tidak hanya akurat tapi juga mudah dipahami dan tidak membebani kognitif pengguna.
+
 Lebih lanjut, Zhang et al. (2019) menegaskan bahwa sistem rekomendasi adalah elemen kunci dalam platform daring karena mereka bertugas memetakan preferensi pengguna dan menyajikan konten yang relevan secara proaktif.
 
 “Recommendation systems play a central role in online platforms by helping users find relevant items among overwhelming choices.”
 — Zhang et al., 2019
 
 ----
-Proyek ini bertujuan untuk membangun **sistem rekomendasi film** dengan memanfaatkan dataset **MovieLens 25M**, menggunakan tiga pendekatan:
+Proyek ini bertujuan untuk membangun **sistem rekomendasi film** dengan memanfaatkan dataset **MovieLens 25M**, menggunakan tiga pendekatan model :
 
 1. **Content-Based Filtering (CBF)** – berdasarkan kemiripan konten (genre).
 2. **Collaborative Filtering (CF)** – menggunakan embedding dengan neural network untuk memahami hubungan antar pengguna dan item.
@@ -40,7 +42,7 @@ Setiap pendekatan dievaluasi menggunakan tiga metrik utama:
 - Solusi personalisasi rekomendasi dapat mendorong **retensi pengguna** dan **loyalitas terhadap platform**.
 - Pendekatan hybrid memungkinkan sistem menjadi lebih adaptif dan efisien untuk berbagai jenis pengguna.
 
-Dengan latar belakang tersebut, sistem rekomendasi yang dirancang dalam proyek ini diharapkan tidak hanya memberikan **rekomendasi yang relevan dan personal**, tetapi juga **beragam dan mencakup lebih banyak film** dalam katalog, sehingga mendorong pengguna untuk mengeksplorasi lebih jauh.
+Berdasarkan latar belakang tersebut, sistem rekomendasi yang dirancang dalam proyek ini diharapkan tidak hanya memberikan **rekomendasi yang relevan dan personal**, tetapi juga **beragam dan mencakup lebih banyak film** dalam katalog, sehingga mendorong pengguna untuk mengeksplorasi lebih jauh. Oleh karena itu, proyek ini berfokus pada pengembangan sistem rekomendasi yang mampu menyeimbangkan antara akurasi personalisasi dan keragaman pilihan, agar pengguna tidak lagi merasa terjebak dalam choice overload.
 
 ---
 
@@ -68,7 +70,7 @@ Menjelaskan pernyataan masalah latar belakang:
 
    Tanpa unsur kebaruan, pengguna mungkin hanya akan menerima saran film yang sudah umum atau telah diketahui. Hal ini bisa mengurangi eksplorasi terhadap film-film baru yang sebenarnya bisa menarik. Sistem rekomendasi perlu memasukkan elemen novelty agar pengguna dapat menemukan film unik dan tidak mainstream yang tetap sesuai dengan minat mereka.
 
-4. **Bagaimana merekomendasikan film yang rendah interaksi oleh pengguna ?**
+4. **Bagaimana merekomendasikan film yang rendah interaksi oleh pengguna namun tetap berdasarkan prefrensi pengguna ?**
 
    Banyak film dalam katalog memiliki sedikit data interaksi, seperti rating, ulasan, atau tontonan, sehingga sulit untuk direkomendasikan menggunakan metode tradisional yang bergantung pada popularitas atau data kolaboratif. Tantangannya adalah mengembangkan sistem rekomendasi yang mampu mengangkat film-film tersebut agar tidak terabaikan, sekaligus tetap relevan dengan preferensi pengguna. Dengan demikian, sistem dapat memperluas jangkauan rekomendasi, meningkatkan eksposur film-film kurang dikenal, dan memberikan pengalaman yang lebih variatif bagi pengguna.
 
@@ -907,9 +909,10 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
    
   Hybrid Model menyeimbangkan relevansi dan novelty. Relevansi tetap terjaga karena mempertimbangkan film serupa yang sudah ditonton, Novelty tercapai karena model juga menyarankan film yang mungkin belum diketahui pengguna, tetapi populer di kalangan pengguna dengan selera serupa. Reranking berbasis penalti genre dan popularitas juga membantu menonjolkan film baru yang tetap relevan namun belum umum diketahui.
 
-4. **Bagaimana merekomendasikan film yang rendah interaksi oleh pengguna ?**
+4. **Bagaimana merekomendasikan film yang rendah interaksi oleh pengguna namun tetap berdasarkan prefrensi pengguna ?**
    
-  Hybrid Model mengatasi cold-start item dengan baik. Teknik ini menggabungkan kekuatan kedua pendekatan:
+  Hybrid Model mengatasi cold-start item dengan baik. Teknik ini menggabungkan kekuatan kedua pendekatan dengan :
+  
   Skor Gabungan (Fusion): Setiap film diberi skor gabungan dengan α sebagai parameter pengontrol (misal: 0.5 untuk seimbang).
 
   ![Fusion](https://github.com/user-attachments/assets/6f8cd168-e1c7-42e8-adb8-005a434c07ba)
