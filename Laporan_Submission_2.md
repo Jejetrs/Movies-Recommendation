@@ -221,7 +221,7 @@ Interpretasi Statistik:
 - Rata-rata rating film populer cenderung stabil di sekitar 4.0.
 - Film dengan sedikit rating → tidak cukup representatif → tidak dapat dipercaya sepenuhnya kualitasnya.
 
-## Data Prosesing - Preparation
+## Data Preparation & Preprosesing
 Pada tahap ini, dilakukan beberapa proses penting untuk menyiapkan data sebelum dilakukan pemodelan, meliputi penggabungan dataset, pengecekan missing value dan duplikasi, sampling data, transformasi fitur, pengambilan fitur, dan genre yang "(no genres listed)" menjadi string kosong, dan encoding dan normalisasi untuk kebutuhan model.
 
 1. Penggabungan Data
@@ -761,7 +761,21 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
     
     Skor CBF dan CF yang sudah dinormalisasi kemudian digabungkan dengan bobot tertentu (misal weight_cbf=0.5) untuk menghasilkan skor akhir rekomendasi film.
 
-  **Output**
+  **Output TOP N Rekomendasi  Hybrid**
+
+  | No | Title                                     | #Times Recommended | Mean ILS | Diversity Score | Genre                           | Feature Dominance |
+    | -- | ----------------------------------------- | ------------------ | -------- | --------------- | ------------------------------- | ----------------- |
+    | 1  | Hot Tub Time Machine 2 (2015)             | 2                  | 0.0900   | 0.9100          | Comedy \| Sci-Fi                | CF                |
+    | 2  | True Crime (1999)                         | 2                  | 0.0819   | 0.9181          | Crime \| Thriller               | CF                |
+    | 3  | Dead Man (1995)                           | 2                  | 0.1212   | 0.8788          | Drama \| Mystery \| Western     | CF                |
+    | 4  | Mission: Impossible III (2006)            | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
+    | 5  | Carrie (2002)                             | 2                  | 0.0644   | 0.9356          | Drama \| Horror \| Thriller     | CF                |
+    | 6  | Mission: Impossible - Fallout (2018)      | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
+    | 7  | Gladiator (1992)                          | 2                  | 0.1137   | 0.8863          | Action \| Drama                 | CF                |
+    | 8  | Mission: Impossible - Rogue Nation (2015) | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
+    | 9  | Sabrina (1954)                            | 2                  | 0.1680   | 0.8320          | Comedy \| Romance               | CF                |
+    | 10 | Beauty Shop (2005)                        | 1                  | 0.0832   | 0.9168          | Comedy                          | CF                |
+
   
   Model ini mengumpulkan dan menganalisis hasil rekomendasi film dari model hybrid (gabungan CBF dan CF). Setiap film yang direkomendasikan dievaluasi dengan metrik:
   - ILS (Intra-List Similarity) untuk mengukur kemiripan antar film dalam daftar rekomendasi (nilai rendah = rekomendasi lebih beragam).
