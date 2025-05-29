@@ -2,13 +2,23 @@
 
 ## Project Overview
 
-Dalam era digital saat ini, layanan streaming seperti Netflix, Disney+, dan Amazon Prime menyediakan ribuan film dan serial TV yang tersedia kapan saja. Meskipun menawarkan kebebasan memilih, pengguna sering merasa kewalahan karena terlalu banyak pilihan. Fenomena ini dikenal sebagai **information overload**, dan secara langsung berdampak pada pengalaman pengguna. Studi oleh Zhang et al. (2019) menegaskan bahwa sistem rekomendasi dapat **meningkatkan keterlibatan pengguna dan durasi menonton rata-rata per sesi**, sehingga sistem ini menjadi komponen penting dalam ekosistem layanan hiburan digital.
+**Latar Belakang**
 
-> “Recommendation systems play a central role in online platforms by helping users find relevant items among overwhelming choices.”  
-> — Zhang et al. (2019)
+Dalam era digital saat ini, perkembangan layanan streaming on-demand seperti Netflix, Disney+, dan Amazon Prime Video telah merevolusi cara manusia mengakses hiburan. Dengan menawarkan ribuan pilihan film dan serial TV dari berbagai genre, bahasa, hingga era produksi, platform ini memberikan kebebasan penuh kepada pengguna untuk memilih tayangan sesuai preferensi mereka. Namun, ironi dari kebebasan ini adalah timbulnya masalah yang dikenal sebagai information overload—suatu kondisi di mana banyaknya pilihan justru membuat pengguna kesulitan dalam mengambil keputusan.
 
-Sistem rekomendasi merupakan solusi utama dalam mengatasi masalah tersebut dengan menyaring informasi berdasarkan preferensi pengguna. Dalam konteks domain hiburan seperti film, sistem rekomendasi tidak hanya bertujuan meningkatkan akurasi hasil pencarian, tetapi juga memperkuat retensi pengguna melalui pengalaman yang lebih personal.
+Sebuah studi kualitatif terbaru yang diterbitkan oleh Springer (2024) menggarisbawahi fenomena ini dalam konteks Netflix. Dari wawancara terhadap sejumlah pengguna, ditemukan bahwa meskipun algoritma personalisasi membantu menyaring konten berdasarkan kebiasaan dan preferensi, pengguna tetap merasa kewalahan dan ragu ketika dihadapkan pada terlalu banyak opsi yang disajikan di halaman utama.
 
+“Meskipun algoritma personalisasi meningkatkan keterlibatan, pengguna tetap merasa kewalahan dengan banyaknya pilihan yang disajikan.”
+— Springer, 2024
+
+Dampak dari kondisi ini bukan hanya penurunan pengalaman pengguna, namun juga berpengaruh terhadap durasi interaksi, loyalitas terhadap platform, hingga pengambilan keputusan yang tergesa atau bahkan tidak jadi menonton sama sekali. Dalam konteks bisnis, ini dapat mengurangi retensi pengguna dan efisiensi rekomendasi konten.
+
+Lebih lanjut, Zhang et al. (2019) menegaskan bahwa sistem rekomendasi adalah elemen kunci dalam platform daring karena mereka bertugas memetakan preferensi pengguna dan menyajikan konten yang relevan secara proaktif.
+
+“Recommendation systems play a central role in online platforms by helping users find relevant items among overwhelming choices.”
+— Zhang et al., 2019
+
+----
 Proyek ini bertujuan untuk membangun **sistem rekomendasi film** dengan memanfaatkan dataset **MovieLens 25M**, menggunakan tiga pendekatan:
 
 1. **Content-Based Filtering (CBF)** – berdasarkan kemiripan konten (genre).
@@ -20,13 +30,6 @@ Setiap pendekatan dievaluasi menggunakan tiga metrik utama:
 - **Mean Similarity / Intra-List Similarity (ILS):** sejauh mana item dalam daftar rekomendasi mirip satu sama lain.
 - **Diversity:** sejauh mana rekomendasi yang diberikan beragam dan tidak homogen.
 - **Coverage:** seberapa besar proporsi item dalam katalog yang direkomendasikan kepada semua pengguna.
-
-Penelitian oleh Aditya et al. (2020) menunjukkan bahwa sistem rekomendasi **berbasis hybrid mampu meningkatkan relevansi dan personalisasi rekomendasi**, terutama dalam lingkungan dinamis seperti e-commerce dan media digital. Hal ini diperkuat oleh studi Astuti dan Hidayat (2022), yang menyoroti bahwa kombinasi pendekatan konten dan kolaboratif dapat menyeimbangkan antara **akurasi** dan **keragaman rekomendasi**.
-
-> “Hybrid approaches enhance the personalization of recommendations by combining the strengths of content-based and collaborative methods.”  
-> — Aditya et al. (2020)  
-> “A hybrid filtering method can improve both the accuracy and diversity of film recommendations.”  
-> — Astuti & Hidayat (2022)
 
 ---
 
@@ -42,10 +45,8 @@ Dengan latar belakang tersebut, sistem rekomendasi yang dirancang dalam proyek i
 ---
 
 ### Referensi:
-
-[1] Zhang, S., Yao, L., Sun, A., & Tay, Y. (2019). *Deep learning based recommender system: A survey and new perspectives*. ACM Computing Surveys (CSUR), 52(1), 1–38.  
-[2] Aditya, R., Wulandari, D. E., & Tjoa, E. T. (2020). *Penerapan Hybrid Recommendation System untuk E-Commerce Menggunakan Pendekatan Content-Based dan Collaborative Filtering*. Jurnal RESTI, 4(1), 1–7.  
-[3] Astuti, S., & Hidayat, R. (2022). *Implementasi Sistem Rekomendasi Film Menggunakan Metode Hybrid Filtering*. JTIIK, 9(3), 345–352.
+- Springer. (2024). Choice overload and personalization in streaming services: A qualitative study on Netflix users.(https://link.springer.com/article/10.1007/s12646-024-00807-0)
+- Zhang, S., Yao, L., Sun, A., & Tay, Y. (2019). Deep learning based recommender system: A survey and new perspectives. ACM Computing Surveys (CSUR), 52(1), Article 5, 1–38. (https://doi.org/10.1145/3285029)
 
 
 ## Business Understanding
@@ -728,19 +729,19 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
 
   **Arsitektur Model Hybrid**
   
-  40%  Content-Based Filtering (CBF) Module:
+  1. 40%  Content-Based Filtering (CBF) Module:
       - Menggunakan matriks kemiripan (cosine similarity) antar film berdasarkan fitur konten (judul, genre).
       - Menghitung skor kemiripan film terhadap film yang sudah ditonton pengguna.
       - Mengurangi skor film dengan penalti popularitas untuk meningkatkan novelty.
 
-  60% Collaborative Filtering (CF) Module:
-  - Menggunakan model deep learning yang memprediksi rating film berdasarkan pola preferensi pengguna (user embedding + item embedding).
-  - Penalti popularitas juga diterapkan agar tidak terlalu merekomendasikan film populer secara berlebihan.
+  2. 60% Collaborative Filtering (CF) Module:
+      - Menggunakan model deep learning yang memprediksi rating film berdasarkan pola preferensi pengguna (user embedding + item embedding).
+      - Penalti popularitas juga diterapkan agar tidak terlalu merekomendasikan film populer secara berlebihan.
 
-  Proses Model Hybrid :
-  - Menggabungkan skor dari CBF dan CF dengan bobot tertentu (weight_cbf=40).
-  - Normalisasi skor kedua metode agar setara.
-  - Menghasilkan ranking film akhir sebagai hasil rekomendasi.
+  3. Hybrid Fusion :
+      - Menggabungkan skor dari CBF dan CF dengan bobot tertentu (weight_cbf=40).
+      - Normalisasi skor kedua metode agar setara.
+      - Menghasilkan ranking film akhir sebagai hasil rekomendasi.
 
   **Note :
   
