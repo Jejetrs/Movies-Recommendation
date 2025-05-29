@@ -55,17 +55,21 @@ Bagian laporan ini mencakup:
 ### Problem Statements
 
 Menjelaskan pernyataan masalah latar belakang:
-1. **Bagaimana merekomendasikan film yang relevan untuk pengguna berdasarkan riwayat film yang mereka tonton?**  
+1. **Bagaimana merekomendasikan film yang relevan untuk pengguna berdasarkan riwayat film yang mereka tonton?**
+    
    Banyak pengguna tidak tahu harus menonton apa selanjutnya, meskipun telah menonton banyak film sebelumnya. Dengan memahami preferensi pengguna melalui riwayat tontonan mereka, sistem rekomendasi diharapkan dapat memberikan saran film yang sesuai dengan minat dan kebiasaan pengguna.
 
 2. **Bagaimana menjaga keragaman dan jangkauan dari hasil rekomendasi agar tidak hanya terbatas pada film populer?**  
+
    Sistem rekomendasi konvensional sering kali bias terhadap film populer dan trending, yang menyebabkan hasil rekomendasi menjadi homogen. Hal ini dapat mengurangi kepuasan pengguna jangka panjang karena kurangnya variasi konten. Penting untuk mengembangkan sistem yang juga mengeksplorasi item yang kurang dikenal namun tetap relevan.
 
 3. **Bagaimana memberikan rekomendasi film yang tidak hanya relevan, tetapi juga memiliki unsur kebaruan (novelty)?**
-    Tanpa unsur kebaruan, pengguna mungkin hanya akan menerima saran film yang sudah umum atau telah diketahui. Hal ini bisa mengurangi eksplorasi terhadap film-film baru yang sebenarnya bisa menarik. Sistem rekomendasi perlu memasukkan elemen novelty agar pengguna dapat menemukan film unik dan tidak mainstream yang tetap sesuai dengan minat mereka.
+
+   Tanpa unsur kebaruan, pengguna mungkin hanya akan menerima saran film yang sudah umum atau telah diketahui. Hal ini bisa mengurangi eksplorasi terhadap film-film baru yang sebenarnya bisa menarik. Sistem rekomendasi perlu memasukkan elemen novelty agar pengguna dapat menemukan film unik dan tidak mainstream yang tetap sesuai dengan minat mereka.
 
 4. **Bagaimana merekomendasikan film yang rendah interaksi oleh pengguna ?**
-    Banyak film dalam katalog memiliki sedikit data interaksi, seperti rating, ulasan, atau tontonan, sehingga sulit untuk direkomendasikan menggunakan metode tradisional yang bergantung pada popularitas atau data kolaboratif. Tantangannya adalah mengembangkan sistem rekomendasi yang mampu mengangkat film-film tersebut agar tidak terabaikan, sekaligus tetap relevan dengan preferensi pengguna. Dengan demikian, sistem dapat memperluas jangkauan rekomendasi, meningkatkan eksposur film-film kurang dikenal, dan memberikan pengalaman yang lebih variatif bagi pengguna.
+
+   Banyak film dalam katalog memiliki sedikit data interaksi, seperti rating, ulasan, atau tontonan, sehingga sulit untuk direkomendasikan menggunakan metode tradisional yang bergantung pada popularitas atau data kolaboratif. Tantangannya adalah mengembangkan sistem rekomendasi yang mampu mengangkat film-film tersebut agar tidak terabaikan, sekaligus tetap relevan dengan preferensi pengguna. Dengan demikian, sistem dapat memperluas jangkauan rekomendasi, meningkatkan eksposur film-film kurang dikenal, dan memberikan pengalaman yang lebih variatif bagi pengguna.
 
 ### Goals
 Untuk menjawab permasalahan yang ada, proyek ini bertujuan untuk:
