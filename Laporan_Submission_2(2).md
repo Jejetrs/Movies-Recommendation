@@ -906,8 +906,8 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
 | Model  | Mean Similarity (ILS) ↓ | Diversity Score ↑    | Coverage ↑          |
 | ------ | ----------------------- | -------------------- | ------------------- |
 | CBF    | 0.1261 ❌ (tertinggi)    | 0.8739 ❌             | 0.7428 ✅            |
-| CF     | 0.0234 ✅ (terendah)     | 0.9766 ✅ (tertinggi) | 0.5304 ❌ (terendah) |
-| Hybrid | 0.0894 ⚖️ (sedang)      | 0.9106 ⚖️            | 0.7472 ✅            |
+| CF     | 0.0232 ✅ (terendah)     | 0.9768 ✅ (tertinggi) | 0.5281 ❌ (terendah) |
+| Hybrid | 0.0909 ⚖️ (sedang)      | 0.9091 ⚖️            | 0.7457 ✅            |
 
 **INSIGHT MODEL**
 - CBF memberikan cakupan rekomendasi yang luas, tetapi filmnya cenderung mirip satu sama lain.
@@ -918,9 +918,9 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
     - Collaborative Filtering (CF): Belajar dari pola interaksi pengguna (siapa menyukai apa).
     - Content-Based Filtering (CBF): Memanfaatkan informasi konten (seperti genre, judul, tahun) untuk menilai kesamaan antar film.
   - Keunggulan Hybrid berdasarkan score tersebut :
-    - Relevansi (ILS) tetap cukup tinggi → rekomendasi masih relevan dengan minat pengguna.
-    - Diversity sangat baik (0.9106) → film yang disarankan sangat bervariasi, membuat eksplorasi menarik.
-    - Coverage paling luas (0.7472) → banyak film jarang ditonton bisa ikut direkomendasikan termasuk film-film yang jarang atau bahkan belum pernah populer sebelumnya (long-tail items).
+    - Relevansi (ILS) tetap cukup tinggi → rekomendasi masih relevan dengan minat dan prefrensi pengguna.
+    - Diversity sangat baik (0.9091) → film yang disarankan sangat bervariasi, membuat eksplorasi menarik.
+    - Coverage paling luas (0.7457) → banyak film jarang ditonton bisa ikut direkomendasikan termasuk film-film yang jarang atau bahkan belum pernah populer sebelumnya (long-tail items).
   - 📌 Secara strategis, Hybrid model:
     - Menghindari bias terhadap film populer
     - Menyajikan opsi baru yang belum diketahui pengguna
@@ -963,11 +963,11 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
 
 2. **Goal 2: Memperluas jangkauan rekomendasi agar tidak hanya mencakup film populer, namun juga film yang kurang dikenal.**
 
-   Hybrid model dengan penalti popularitas berhasil meningkatkan novelty rekomendasi dengan memberikan peluang lebih besar bagi film non populer untuk muncul dalam daftar rekomendasi. Film non-populer tetap mendapat kesempatan muncul di daftar rekomendasi, dapat dilihat dari score coverage meningkat ke 0.7472. Ini membantu platform mengekspos lebih banyak konten dari katalog.
+   Hybrid model dengan penalti popularitas berhasil meningkatkan novelty rekomendasi dengan memberikan peluang lebih besar bagi film non populer untuk muncul dalam daftar rekomendasi. Film non-populer tetap mendapat kesempatan muncul di daftar rekomendasi, dapat dilihat dari score coverage meningkat ke 0.7457. Ini membantu platform mengekspos lebih banyak konten dari katalog.
 
 3. **Goal 3: Menghadirkan unsur kebaruan (novelty) dalam rekomendasi untuk menawarkan film baru (belum pernah di tonton pengguna).**
   
-   Melalui proses reranking dengan penalti genre, sistem rekomendasi mampu mengurangi dominasi genre tertentu dan menyajikan daftar rekomendasi yang lebih bervariasi. Diversity score yang tinggi (0.9106) pada model hybrid menunjukkan bahwa pengguna menerima rekomendasi dari berbagai genre dan tema, sehingga pengalaman eksplorasi film menjadi lebih menarik dan tidak monoton.
+   Melalui proses reranking dengan penalti genre, sistem rekomendasi mampu mengurangi dominasi genre tertentu dan menyajikan daftar rekomendasi yang lebih bervariasi. Diversity score yang tinggi (0.9091) pada model hybrid menunjukkan bahwa pengguna menerima rekomendasi dari berbagai genre dan tema, sehingga pengalaman eksplorasi film menjadi lebih menarik dan tidak monoton.
 
 4. **Goal 4: Mengembangkan mekanisme rekomendasi yang mampu mengidentifikasi dan menyarankan film-film dengan tingkat interaksi rendah namun relevan bagi pengguna,...**
 
