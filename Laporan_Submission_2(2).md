@@ -76,10 +76,10 @@ Menjelaskan pernyataan masalah latar belakang:
 
 ### Goals
 Untuk menjawab permasalahan yang ada, proyek ini bertujuan untuk:
-- Menyajikan rekomendasi film yang relevan berdasarkan riwayat tontonan pengguna.
-- Memperluas jangkauan rekomendasi agar tidak hanya mencakup film populer, namun juga film yang kurang dikenal.
-- Menghadirkan unsur kebaruan (novelty) dalam rekomendasi untuk menawarkan film baru (belum pernah di tonton pengguna).
-- Mengembangkan mekanisme rekomendasi yang mampu mengidentifikasi dan menyarankan film-film dengan tingkat interaksi rendah namun relevan bagi pengguna, sehingga memperluas cakupan rekomendasi dan meningkatkan eksposur konten yang kurang populer tanpa mengorbankan kualitas dan kepuasan pengguna.
+1. Menyajikan rekomendasi film yang relevan berdasarkan riwayat tontonan pengguna.
+2. Memperluas jangkauan rekomendasi agar tidak hanya mencakup film populer, namun juga film yang kurang dikenal.
+3. Menghadirkan unsur kebaruan (novelty) dalam rekomendasi untuk menawarkan film baru (belum pernah di tonton pengguna).
+4. Mengembangkan mekanisme rekomendasi yang mampu mengidentifikasi dan menyarankan film-film dengan tingkat interaksi rendah namun relevan bagi pengguna, sehingga memperluas cakupan rekomendasi dan meningkatkan eksposur konten yang kurang populer tanpa mengorbankan kualitas dan kepuasan pengguna.
 
 #### **“Solution Statement”**
 Untuk mewujudkan tujuan proyek, pendekatan yang digunakan adalah sebagai berikut:
