@@ -287,7 +287,9 @@ Pada tahap ini, dilakukan beberapa proses penting untuk menyiapkan data sebelum 
        observed=True
    )
    ```
-   
+
+   ![heatmap](https://github.com/user-attachments/assets/fab06bdc-3619-4a2b-afe2-e1bcf81e8b7f)
+
 <ins><strong>Data Preparation (sebelum modeling)<ins><strong>
 
 1. Data Preparation untuk Model Content-Based
@@ -367,7 +369,7 @@ Tahapan ini menjelaskan tiga pendekatan model rekomendasi yang dibangun untuk me
 Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi dan perbandingan efektivitas dalam merekomendasikan film berdasarkan dua pendekatan utama, yaitu Content-Based Filtering (CBF) yang memanfaatkan informasi konten seperti genre film, dan Collaborative Filtering (CF) yang mempelajari pola interaksi pengguna dengan item lainnya, serta model hybrid yang menggabungkan keduanya. Hal ini memungkinkan pemahaman yang lebih baik terkait kekuatan dan kelemahan masing-masing model dalam konteks dataset yang digunakan yang dapat dilihat melalui evaluasi Mean Similiarity, Diversity dan Coverage. Dari ketiga model ini juga diharapkan dapat menghasilkan keputusan model terbaik yang dapat digunakan kedepannya.
 
 
-**Algoritma yang digunakan**
+**Algoritma yang digunakan : **
 
 1. <ins><strong>Content-Based Filtering (CBF)<strong><ins>
 
@@ -375,7 +377,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
 
    **Arsitektur Model**
 
-      | **Komponen**          | **Fungsi**                                                                    | **Parameter**                       |
+      | **Teknik**            | **Fungsi**                                                                    | **Parameter**                       |
       | --------------------- | ----------------------------------------------------------------------------- | ----------------------------------- |
       | **TF-IDF Vectorizer** | Mengubah fitur teks menjadi representasi numerik berbasis bobot kata penting. | `text_features`: genre + judul film |
       | **Cosine Similarity** | Mengukur kemiripan antar film berdasarkan vektor hasil TF-IDF.                | Matriks TF-IDF antar film           |
@@ -747,7 +749,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
 
    **Note :
 
-   Pemilihan proporsi 40% Content-Based Filtering (CBF) dan 60% Collaborative Filtering (CF) pada model Hybrid dilakukan dengan pertimbangan untuk meningkatkan relevansi dan personalisasi rekomendasi, sambil tetap menjaga diversity dan coverage yang baik. Proporsi ini memberikan penekanan lebih pada CF, agar hasil rekomendasi tetap personal dan relevan secara statistik. Namun tidak menghilangkan peran CBF, yang mampu menjembatani cold-start item dan meningkatkan eksplorasi film baru.
+   Pemilihan proporsi 40% Content-Based Filtering (CBF) dan 60% Collaborative Filtering (CF) pada model Hybrid diberlakukan dengan pertimbangan untuk meningkatkan relevansi dan personalisasi rekomendasi, sambil tetap menjaga diversity dan coverage yang baik. Proporsi ini memberikan penekanan lebih pada CF, agar hasil rekomendasi tetap personal dan relevan secara statistik. Namun tidak menghilangkan peran CBF, yang mampu menjembatani cold-start item dan meningkatkan eksplorasi film baru.
 
    **Alur Modeling**
    
@@ -760,20 +762,19 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
    - Penggabungan Skor
 
      Skor CBF dan CF yang sudah dinormalisasi kemudian digabungkan dengan bobot tertentu (misal weight_cbf=0.5) untuk menghasilkan skor akhir rekomendasi film.
-
-  **Output TOP N Rekomendasi  Hybrid**
-  | No | Title                                     | #Times Recommended | Mean ILS | Diversity Score | Genre                           | Feature Dominance |
-  | -- | ----------------------------------------- | ------------------ | -------- | --------------- | ------------------------------- | ----------------- |
-  | 1  | Hot Tub Time Machine 2 (2015)             | 2                  | 0.0900   | 0.9100          | Comedy \| Sci-Fi                | CF                |
-  | 2  | True Crime (1999)                         | 2                  | 0.0819   | 0.9181          | Crime \| Thriller               | CF                |
-  | 3  | Dead Man (1995)                           | 2                  | 0.1212   | 0.8788          | Drama \| Mystery \| Western     | CF                |
-  | 4  | Mission: Impossible III (2006)            | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
-  | 5  | Carrie (2002)                             | 2                  | 0.0644   | 0.9356          | Drama \| Horror \| Thriller     | CF                |
-  | 6  | Mission: Impossible - Fallout (2018)      | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
-  | 7  | Gladiator (1992)                          | 2                  | 0.1137   | 0.8863          | Action \| Drama                 | CF                |
-  | 8  | Mission: Impossible - Rogue Nation (2015) | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
-  | 9  | Sabrina (1954)                            | 2                  | 0.1680   | 0.8320          | Comedy \| Romance               | CF                |
-  | 10 | Beauty Shop (2005)                        | 1                  | 0.0832   | 0.9168          | Comedy                          | CF                |
+   **Output TOP N Rekomendasi  Hybrid**
+     | No | Title                                     | #Times Recommended | Mean ILS | Diversity Score | Genre                           | Feature Dominance |
+     | -- | ----------------------------------------- | ------------------ | -------- | --------------- | ------------------------------- | ----------------- |
+     | 1  | Hot Tub Time Machine 2 (2015)             | 2                  | 0.0900   | 0.9100          | Comedy \| Sci-Fi                | CF                |
+     | 2  | True Crime (1999)                         | 2                  | 0.0819   | 0.9181          | Crime \| Thriller               | CF                |
+     | 3  | Dead Man (1995)                           | 2                  | 0.1212   | 0.8788          | Drama \| Mystery \| Western     | CF                |
+     | 4  | Mission: Impossible III (2006)            | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
+     | 5  | Carrie (2002)                             | 2                  | 0.0644   | 0.9356          | Drama \| Horror \| Thriller     | CF                |
+     | 6  | Mission: Impossible - Fallout (2018)      | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
+     | 7  | Gladiator (1992)                          | 2                  | 0.1137   | 0.8863          | Action \| Drama                 | CF                |
+     | 8  | Mission: Impossible - Rogue Nation (2015) | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
+     | 9  | Sabrina (1954)                            | 2                  | 0.1680   | 0.8320          | Comedy \| Romance               | CF                |
+     | 10 | Beauty Shop (2005)                        | 1                  | 0.0832   | 0.9168          | Comedy                          | CF                |
   
   Model ini mengumpulkan dan menganalisis hasil rekomendasi film dari model hybrid (gabungan CBF dan CF). Setiap film yang direkomendasikan dievaluasi dengan metrik:
   - ILS (Intra-List Similarity) untuk mengukur kemiripan antar film dalam daftar rekomendasi (nilai rendah = rekomendasi lebih beragam).
@@ -783,7 +784,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
 
 ## Evaluation
 
-Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Content-Based Filtering (CBF), Collaborative Filtering (CF), dan Hybrid Model yang menggabungkan keduanya. Untuk mengevaluasi performa model, saya memilih metrik evaluasi berikut:
+Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Content-Based Filtering (CBF), Collaborative Filtering (CF), dan Hybrid Model yang menggabungkan keduanya untuk optimalisasi. Untuk mengevaluasi performa model, saya memilih metrik evaluasi berikut:
 
 - **Mean Intra-List Similarity (ILS)**
 
@@ -812,11 +813,10 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
   Interpretasi:
     - Nilai diversity tinggi → rekomendasi sangat beragam
     - Nilai diversity rendah → rekomendasi cenderung mirip satu sama lain
-      
-<br>
+
+  <br>
   Contoh hubungan ILS dan Diversity
   <br>
-  
   | **Mean Similarity (ILS)** | **Diversity Score (1 - ILS)** |
   | ------------------------- | ----------------------------- |
   | 1.00                      | 0.00                          |
@@ -824,9 +824,8 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
   | 0.50                      | 0.50                          |
   | 0.20                      | 0.80                          |
   | 0.00                      | 1.00                          |
-
+  
   contoh code :
-
   ```python
   mean_ils = np.mean(ils_list)
   diversity_score = 1 - mean_ils
@@ -849,20 +848,23 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
 - Mean Intra-List Similarity (ILS)
 
   ILS digunakan untuk mengukur seberapa mirip film-film dalam satu daftar rekomendasi. Nilai ILS yang tinggi menunjukkan bahwa rekomendasi cenderung homogen (kurang bervariasi), sedangkan nilai rendah menunjukkan rekomendasi yang lebih beragam.
+  
   → Tujuan: menghindari rekomendasi yang terlalu mirip agar pengguna tidak bosan.
 
 - Diversity Score
 
   Diversity dihitung sebagai 1 - ILS, sehingga semakin tinggi nilainya, rekomendasi semakin bervariasi.
+  
   → Tujuan: memastikan pengguna mendapat saran film dari genre atau konten yang berbeda-beda.
 
 - Coverage
 
   Coverage mengukur seberapa banyak film dalam katalog yang pernah direkomendasikan. Nilai coverage yang tinggi menunjukkan sistem menjelajah lebih luas, tidak hanya merekomendasikan film populer saja.
+  
   → Tujuan: meningkatkan eksposur terhadap film-film yang kurang dikenal.
 
 
-**Hasil Evaluasi Tiap Model**
+### HASIL EVALUASI MODEL
 <br>
 | Model  | Mean Similarity (ILS) ↓ | Diversity Score ↑    | Coverage ↑          |
 | ------ | ----------------------- | -------------------- | ------------------- |
@@ -871,7 +873,7 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
 | Hybrid | 0.0894 ⚖️ (sedang)      | 0.9106 ⚖️            | 0.7472 ✅            |
 <br>
 
-**Intepretasi**
+**INSIGHT MODEL**
 - CBF memberikan cakupan rekomendasi yang luas, tetapi filmnya cenderung mirip satu sama lain.
 - CF menghasilkan rekomendasi paling beragam, tapi hanya untuk sebagian kecil film.
 - Hybrid memberi keseimbangan yang baik antara keberagaman dan cakupan, menjadikannya model yang paling optimal secara keseluruhan.
@@ -890,8 +892,8 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
 <br>
 
 ### <ins><strong>**INSIGHT berdasarkan BUSSINES UNDERSTANDING**<ins><strong>
+ <br>
  
-
 <ins><strong>Menjawab PROBLEM STATEMENT<ins><strong>
 
 1. **Bagaimana merekomendasikan film yang relevan untuk pengguna berdasarkan riwayat film yang mereka tonton?**
@@ -919,19 +921,19 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
 
 <ins><strong>**Mencapai GOALS yang Diharapkan**<ins><strong>
 
-**Goal 1: Menyajikan rekomendasi film yang relevan berdasarkan riwayat tontonan pengguna.**
+1. **Goal 1: Menyajikan rekomendasi film yang relevan berdasarkan riwayat tontonan pengguna.**
 
 Model hybrid berhasil memberikan rekomendasi yang relevan dengan preferensi pengguna, memanfaatkan keunggulan Content-Based Filtering untuk memahami kesamaan konten film (genre, judul) dan Collaborative Filtering untuk mempelajari pola interaksi pengguna. Model ini menghasilkan rekomendasi yang personal dan relevan, mendukung pengguna dalam menemukan film sesuai minat mereka.
 
-**Goal 2: Memperluas jangkauan rekomendasi agar tidak hanya mencakup film populer, namun juga film yang kurang dikenal.**
+2. **Goal 2: Memperluas jangkauan rekomendasi agar tidak hanya mencakup film populer, namun juga film yang kurang dikenal.**
 
 Hybrid model dengan penalti popularitas berhasil meningkatkan novelty rekomendasi dengan memberikan peluang lebih besar bagi film non populer untuk muncul dalam daftar rekomendasi. Film non-populer tetap mendapat kesempatan muncul di daftar rekomendasi, dapat dilihat dari score coverage meningkat ke 0.7472. Ini membantu platform mengekspos lebih banyak konten dari katalog.
 
-**Goal 3: Menghadirkan unsur kebaruan (novelty) dalam rekomendasi untuk menawarkan film baru (belum pernah di tonton pengguna).**
+3. **Goal 3: Menghadirkan unsur kebaruan (novelty) dalam rekomendasi untuk menawarkan film baru (belum pernah di tonton pengguna).**
 
 Melalui proses reranking dengan penalti genre, sistem rekomendasi mampu mengurangi dominasi genre tertentu dan menyajikan daftar rekomendasi yang lebih bervariasi. Diversity score yang tinggi (0.9106) pada model hybrid menunjukkan bahwa pengguna menerima rekomendasi dari berbagai genre dan tema, sehingga pengalaman eksplorasi film menjadi lebih menarik dan tidak monoton.
 
-**Goal 4: Mengembangkan mekanisme rekomendasi yang mampu mengidentifikasi dan menyarankan film-film dengan tingkat interaksi rendah namun relevan bagi pengguna,...**
+4. **Goal 4: Mengembangkan mekanisme rekomendasi yang mampu mengidentifikasi dan menyarankan film-film dengan tingkat interaksi rendah namun relevan bagi pengguna,...**
 
 Hybrid model berhasil memadukan keunggulan CBF (berfungsi optimal pada item cold-start) dan CF (memberikan konteks pola pengguna lain) untuk memberikan rekomendasi pada film-film dengan data interaksi rendah (long-tail items) yang relevan dengan minat pengguna. Evaluasi menggunakan metrik Mean Similarity, Diversity, dan Coverage menunjukkan bahwa Hybrid model menunjukkan keseimbangan antara relevansi, keragaman, dan cakupan—kriteria utama dalam recommender system yang kuat dan adaptif terhadap konteks bisnis.
 <br>
@@ -940,22 +942,23 @@ Hybrid model berhasil memadukan keunggulan CBF (berfungsi optimal pada item cold
 
 Untuk mewujudkan tujuan proyek, pendekatan yang digunakan adalah sebagai berikut:
 
-- Menggunakan TF-IDF dari genre film dan cosine similarity untuk merekomendasikan film yang mirip dengan yang sudah ditonton pengguna.
-  a. Personalisasi yang Lebih Akurat: Menghasilkan rekomendasi yang sesuai dengan preferensi konten pengguna, terutama berdasarkan genre.<br>
-  b. Mengatasi Cold-Start Item: Film baru (yang belum memiliki banyak interaksi) tetap bisa direkomendasikan selama informasi genre tersedia.
+1. Menggunakan TF-IDF dari genre film dan cosine similarity untuk merekomendasikan film yang mirip dengan yang sudah ditonton pengguna.
+   - Personalisasi yang Lebih Akurat: Menghasilkan rekomendasi yang sesuai dengan preferensi konten pengguna, terutama berdasarkan genre.
+   - Mengatasi Cold-Start Item: Film baru (yang belum memiliki banyak interaksi) tetap bisa direkomendasikan selama informasi genre tersedia.
 
-- Membangun model **Content Based Filtering** yang fokus pada kontent tertentu.
+2. Membangun model **Content Based Filtering** yang fokus pada kontent tertentu.
+
+   Menghasilkan model yang fokus pada preferensi spesifik konten. Memungkinkan sistem untuk menyarankan film yang secara konten mirip dengan film yang disukai pengguna sebelumnya.
+
+3. Membangun mode **Collaborative Filtering (CF)** menggunakan embedding neural network (RecommenderNet) untuk mempelajari pola interaksi pengguna terhadap film berdasarkan histori rating.
+
+   Menghasilkan model yang mampu menangkap preferensi tersembunyi (Implisit Preference) berdasarkan interaksi. CF memungkinkan sistem mengenali pola kesukaan pengguna berdasarkan perilaku kolektif pengguna lain.
+
+4. Membangun model **Hybrid** untuk optimalisasi model gabungan.
   
-  Menghasilkan model yang fokus pada preferensi spesifik konten. Memungkinkan sistem untuk menyarankan film yang secara konten mirip dengan film yang disukai pengguna sebelumnya.
+  Model ini tidak hanya mengulang rekomendasi yang mirip atau populer, tapi dengan optimalisasi model yang ada juga mendorong penemuan konten baru yang sesuai preferensi pengguna.
 
-- Membangun mode **Collaborative Filtering (CF)** menggunakan embedding neural network (RecommenderNet) untuk mempelajari pola interaksi pengguna terhadap film berdasarkan histori rating.
-  
-  Menghasilkan model yang mampu menangkap preferensi tersembunyi (Implisit Preference) berdasarkan interaksi. CF memungkinkan sistem mengenali pola kesukaan pengguna berdasarkan perilaku kolektif pengguna lain.
-
-- Membangun model **Hybrid** untk optimalisasi model gabungan
-  Model ini tidak hanya mengulang rekomendasi yang mirip atau populer, tapi juga mendorong penemuan konten baru yang sesuai. Optimalisasi model yang ada.
-
-- Menggunakan metrik evaluasi:  
+5. Menggunakan metrik evaluasi:  
   - **Mean Similarity (ILS):** Menilai homogenitas antar film dalam daftar rekomendasi.
   - **Diversity:** Mengukur variasi genre dan konten antar film yang direkomendasikan.
   - **Coverage:** Menghitung proporsi film dari katalog yang berhasil direkomendasikan ke minimal satu pengguna.
@@ -964,15 +967,15 @@ Untuk mewujudkan tujuan proyek, pendekatan yang digunakan adalah sebagai berikut
       2. Menilai keragaman konten; model dengan diversity tinggi mencegah daftar rekomendasi yang monoton.
       3. Mengukur seberapa luas sistem menjelajahi katalog film. Coverage tinggi berarti lebih banyak film berpeluang direkomendasikan, bukan hanya yang populer.
 
-- Menambahkan **penalti popularitas** pada film populer untuk meningkatkan eksplorasi terhadap film kurang dikenal yang tetap relevan.
+6. Menambahkan **penalti popularitas** pada film populer untuk meningkatkan eksplorasi terhadap film kurang dikenal yang tetap relevan.
   
   Mengurangi Bias ke Film Populer dan meningkatkan ekplorasi. Memperkenalkan film long-tail yang mungkin relevan tapi jarang muncul karena jumlah interaksinya sedikit.
 
-- Melakukan **reranking** dengan penalti genre serupa untuk meningkatkan diversity dalam daftar rekomendasi, sehingga pengguna mendapatkan kombinasi film yang tidak hanya relevan, tapi juga segar dan bervariasi, memperkaya pengalaman eksplorasi konten.
-  a. Menghindari dominasi genre tertentu dalam rekomendasi.
-  b. Pengguna mendapatkan daftar film dari genre yang beragam namun tetap relevan, mendorong eksplorasi lebih luas.
-  c. Memberikan kombinasi rekomendasi yang bersifat personal, baru, dan tidak repetitif.
-  d. Membuat pengguna lebih betah menjelajah katalog, karena rekomendasi terasa dinamis dan tidak kaku.
+7. Melakukan **reranking** dengan penalti genre serupa untuk meningkatkan diversity dalam daftar rekomendasi, sehingga pengguna mendapatkan kombinasi film yang tidak hanya relevan, tapi juga segar dan bervariasi, memperkaya pengalaman eksplorasi konten.
+   - Menghindari dominasi genre tertentu dalam rekomendasi.
+   - Pengguna mendapatkan daftar film dari genre yang beragam namun tetap relevan, mendorong eksplorasi lebih luas.
+   - Memberikan kombinasi rekomendasi yang bersifat personal, baru, dan tidak repetitif.
+   - Membuat pengguna lebih betah menjelajah katalog, karena rekomendasi terasa dinamis dan tidak kaku.
 
 ## Kesimpulan
   1. Model rekomendasi hybrid yang dibangun berhasil menggabungkan keunggulan Content-Based Filtering dan Collaborative Filtering untuk menghasilkan rekomendasi yang personal, relevan, dan variatif.
