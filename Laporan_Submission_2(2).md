@@ -509,6 +509,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
      - Penalti popularitas membuat rekomendasi tidak didominasi film-film mainstream.
      - Penalti genre membuat rekomendasi beragam secara tema dan genre, sehingga user mendapat pilihan film yang kaya dan berwarna, tidak monoton.
      - Output menampilkan keseimbangan antara kedekatan film utama dan keberagaman rekomendasi.
+   <br>
      
    Kelebihan CBF
    - Personal dan spesifik: Rekomendasi sepenuhnya disesuaikan dengan preferensi unik pengguna.
@@ -520,20 +521,21 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
    - Cold-start untuk item baru: Jika item tidak memiliki deskripsi konten yang cukup, tidak dapat direkomendasikan.
    - Terbatas pada informasi yang tersedia: Jika data film kurang lengkap atau tidak representatif, hasil rekomendasi bisa kurang optimal.
 
-2. <ins><strong>Collaborative Filtering (CF)<strong><ins>
+1. <ins><strong>Collaborative Filtering (CF)<strong><ins>
    
     Model Collaborative Filtering yang dibangun pada proyek ini menggunakan pendekatan berbasis pembelajaran mendalam (Deep Learning), tepatnya melalui teknik Matrix Factorization dengan Embedding Layer pada framework TensorFlow. Tujuan utamanya adalah mempelajari hubungan implisit antara interaksi pengguna dengan item (film), untuk memprediksi rating atau preferensi pengguna terhadap film yang belum ditonton.
 
    **Arsitektur Model**
 
    Model ini menggunakan arsitektur **RecommenderNet** dengan pendekatan neural collaborative filtering, dengan komponen utama (parameter) sebagai berikut:
-   | **Komponen**                     | **Fungsi**                                                                                                                                                                                                       |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Embedding**                    | Mengubah ID pengguna dan ID film menjadi vektor berdimensi 150 di ruang laten. Vektor ini mencerminkan karakteristik tersembunyi (laten) yang dipelajari dari data rating.                                       |
-| **User Bias & Movie Bias**       | Menangkap kecenderungan pengguna dalam memberi rating (tinggi/rendah) dan kecenderungan film (umumnya disukai atau tidak). Komponen ini membantu meningkatkan akurasi prediksi.                                  |
-| **Dot Product**                  | Menghitung kecocokan antara pengguna dan film dengan menjumlahkan hasil perkalian elemen-elemen embedding pengguna dan film. Semakin tinggi hasilnya, semakin besar kemungkinan pengguna menyukai film tersebut. |
-| **Dropout Layer**                | Digunakan untuk mengurangi risiko overfitting, terutama dalam proses pelatihan embedding dengan cara menonaktifkan sebagian neuron secara acak saat training.                                                    |
-| **Activation Function: Sigmoid** | Karena rating dinormalisasi ke rentang \[0,1], sigmoid digunakan agar output prediksi tetap dalam rentang tersebut, menjadikannya cocok untuk regresi nilai rating.                                              |
+
+    | **Komponen**                     | **Fungsi**                                                                                                                                                                                                       |
+    |----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | **Embedding**                    | Mengubah ID pengguna dan ID film menjadi vektor berdimensi 150 di ruang laten. Vektor ini mencerminkan karakteristik tersembunyi (laten) yang dipelajari dari data rating.                                   |
+    | **User Bias & Movie Bias**       | Menangkap kecenderungan pengguna dalam memberi rating (tinggi/rendah) dan kecenderungan film (umumnya disukai atau tidak). Komponen ini membantu meningkatkan akurasi prediksi.                                |
+    | **Dot Product**                  | Menghitung kecocokan antara pengguna dan film dengan menjumlahkan hasil perkalian elemen-elemen embedding pengguna dan film. Semakin tinggi hasilnya, semakin besar kemungkinan pengguna menyukai film tersebut. |
+    | **Dropout Layer**                | Digunakan untuk mengurangi risiko overfitting, terutama dalam proses pelatihan embedding dengan cara menonaktifkan sebagian neuron secara acak saat training.                                                  |
+    | **Activation Function: Sigmoid** | Karena rating dinormalisasi ke rentang [0,1], sigmoid digunakan agar output prediksi tetap dalam rentang tersebut, menjadikannya cocok untuk regresi nilai rating.                                              |
 
     **Proses Modeling**
 
@@ -731,52 +733,48 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
         - Butuh banyak data: Performanya tinggi jika data interaksi pengguna cukup besar.
         - Kompleksitas komputasi: Lebih berat dibanding model tradisional seperti CBF sederhana.
 
-Hybrid recommendation menggabungkan dua pendekatan utama dalam sistem rekomendasi yaitu Content-Based Filtering (CBF) dan Collaborative Filtering (CF). Tujuannya adalah memanfaatkan kelebihan kedua metode agar menghasilkan rekomendasi yang lebih akurat, relevan, dan beragam.
+4. <ins><strong>Hybrid Model<ins><strong>
 
-  **Arsitektur Model Hybrid**
+   Hybrid recommendation menggabungkan dua pendekatan utama dalam sistem rekomendasi yaitu Content-Based Filtering (CBF) dan Collaborative Filtering (CF). Tujuannya adalah memanfaatkan kelebihan kedua metode agar menghasilkan rekomendasi yang lebih akurat, relevan, dan beragam.
 
+   **Arsitektur Model Hybrid**
 
-  | **Komponen**                      | **Fungsi**                                                                                                                                                                                                           | **Catatan / Parameter**                              |
-  | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-  | **Content-Based Filtering (CBF)** | Mengukur kemiripan antar film berdasarkan fitur konten seperti judul dan genre. <br> Menghitung skor kemiripan film yang telah ditonton pengguna. <br> Memberi penalti pada film populer untuk meningkatkan novelty. | Bobot kontribusi: 40%<br>Fitur: judul, genre         |
-  | **Collaborative Filtering (CF)**  | Menggunakan model deep learning dengan pola user & item embedding untuk memprediksi rating. <br> Menerapkan penalti pada film populer agar rekomendasi lebih beragam.                                                     | Bobot kontribusi: 60%<br>Model: deep learning        |
-  | **Hybrid Fusion**                 | Menggabungkan skor dari CBF dan CF berdasarkan bobot. <br> Melakukan normalisasi skor ke dua metode sebelum penggabungan agar setara. <br> Menghasilkan ranking akhir film sebagai rekomendasi.                                                | `weight_cbf = 40` (sisanya CF)<br>Skor dinormalisasi |
+      | **Komponen**                      | **Fungsi**                                                                                                                                                                                                           | **Catatan / Parameter**                              |
+      | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+      | **Content-Based Filtering (CBF)** | Mengukur kemiripan antar film berdasarkan fitur konten seperti judul dan genre. <br> Menghitung skor kemiripan film yang telah ditonton pengguna. <br> Memberi penalti pada film populer untuk meningkatkan novelty. | Bobot kontribusi: 40%<br>Fitur: judul, genre         |
+      | **Collaborative Filtering (CF)**  | Menggunakan model deep learning dengan pola user & item embedding untuk memprediksi rating. <br> Menerapkan penalti pada film populer agar rekomendasi lebih beragam.                                                     | Bobot kontribusi: 60%<br>Model: deep learning        |
+      | **Hybrid Fusion**                 | Menggabungkan skor dari CBF dan CF berdasarkan bobot. <br> Melakukan normalisasi skor ke dua metode sebelum penggabungan agar setara. <br> Menghasilkan ranking akhir film sebagai rekomendasi.                                                | `weight_cbf = 40` (sisanya CF)<br>Skor dinormalisasi |
 
+   **Note :
 
-  **Note :
-  
-  Pemilihan proporsi 40% Content-Based Filtering (CBF) dan 60% Collaborative Filtering (CF) pada model Hybrid dilakukan dengan pertimbangan untuk meningkatkan relevansi dan personalisasi rekomendasi, sambil tetap menjaga diversity dan coverage yang baik. Proporsi ini memberikan penekanan lebih pada CF, agar hasil rekomendasi tetap personal dan relevan secara statistik. Namun tidak menghilangkan peran CBF, yang mampu menjembatani cold-start item dan meningkatkan eksplorasi film baru.
+   Pemilihan proporsi 40% Content-Based Filtering (CBF) dan 60% Collaborative Filtering (CF) pada model Hybrid dilakukan dengan pertimbangan untuk meningkatkan relevansi dan personalisasi rekomendasi, sambil tetap menjaga diversity dan coverage yang baik. Proporsi ini memberikan penekanan lebih pada CF, agar hasil rekomendasi tetap personal dan relevan secara statistik. Namun tidak menghilangkan peran CBF, yang mampu menjembatani cold-start item dan meningkatkan eksplorasi film baru.
 
-  **Alur Modeling**
-  
-  - Content-Based Filtering (CBF)
-    
-    Menghitung skor kemiripan film berdasarkan fitur konten (genre, judul, dsb) menggunakan cosine similarity. Skor ini juga dikurangi dengan penalti popularitas untuk menghindari dominasi film populer.
+   **Alur Modeling**
+   
+   - Content-Based Filtering (CBF)
+     
+     Menghitung skor kemiripan film berdasarkan fitur konten (genre, judul, dsb) menggunakan cosine similarity. Skor ini juga dikurangi dengan penalti popularitas untuk menghindari dominasi film populer.
+   - Collaborative Filtering (CF)
+     
+     Menggunakan model prediksi berbasis interaksi pengguna-film (misal model neural network) untuk memperkirakan rating film yang belum ditonton pengguna. Skor prediksi ini juga dikenai penalti popularitas.
+   - Penggabungan Skor
 
-  - Collaborative Filtering (CF)
-    
-    Menggunakan model prediksi berbasis interaksi pengguna-film (misal model neural network) untuk memperkirakan rating film yang belum ditonton pengguna. Skor prediksi ini juga dikenai penalti popularitas.
-
-  - Penggabungan Skor
-    
-    Skor CBF dan CF yang sudah dinormalisasi kemudian digabungkan dengan bobot tertentu (misal weight_cbf=0.5) untuk menghasilkan skor akhir rekomendasi film.
+     Skor CBF dan CF yang sudah dinormalisasi kemudian digabungkan dengan bobot tertentu (misal weight_cbf=0.5) untuk menghasilkan skor akhir rekomendasi film.
 
   **Output TOP N Rekomendasi  Hybrid**
-
-| No | Title                                     | #Times Recommended | Mean ILS | Diversity Score | Genre                           | Feature Dominance |
-| -- | ----------------------------------------- | ------------------ | -------- | --------------- | ------------------------------- | ----------------- |
-| 1  | Hot Tub Time Machine 2 (2015)             | 2                  | 0.0900   | 0.9100          | Comedy \| Sci-Fi                | CF                |
-| 2  | True Crime (1999)                         | 2                  | 0.0819   | 0.9181          | Crime \| Thriller               | CF                |
-| 3  | Dead Man (1995)                           | 2                  | 0.1212   | 0.8788          | Drama \| Mystery \| Western     | CF                |
-| 4  | Mission: Impossible III (2006)            | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
-| 5  | Carrie (2002)                             | 2                  | 0.0644   | 0.9356          | Drama \| Horror \| Thriller     | CF                |
-| 6  | Mission: Impossible - Fallout (2018)      | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
-| 7  | Gladiator (1992)                          | 2                  | 0.1137   | 0.8863          | Action \| Drama                 | CF                |
-| 8  | Mission: Impossible - Rogue Nation (2015) | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
-| 9  | Sabrina (1954)                            | 2                  | 0.1680   | 0.8320          | Comedy \| Romance               | CF                |
-| 10 | Beauty Shop (2005)                        | 1                  | 0.0832   | 0.9168          | Comedy                          | CF                |
-
-
+  | No | Title                                     | #Times Recommended | Mean ILS | Diversity Score | Genre                           | Feature Dominance |
+  | -- | ----------------------------------------- | ------------------ | -------- | --------------- | ------------------------------- | ----------------- |
+  | 1  | Hot Tub Time Machine 2 (2015)             | 2                  | 0.0900   | 0.9100          | Comedy \| Sci-Fi                | CF                |
+  | 2  | True Crime (1999)                         | 2                  | 0.0819   | 0.9181          | Crime \| Thriller               | CF                |
+  | 3  | Dead Man (1995)                           | 2                  | 0.1212   | 0.8788          | Drama \| Mystery \| Western     | CF                |
+  | 4  | Mission: Impossible III (2006)            | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
+  | 5  | Carrie (2002)                             | 2                  | 0.0644   | 0.9356          | Drama \| Horror \| Thriller     | CF                |
+  | 6  | Mission: Impossible - Fallout (2018)      | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
+  | 7  | Gladiator (1992)                          | 2                  | 0.1137   | 0.8863          | Action \| Drama                 | CF                |
+  | 8  | Mission: Impossible - Rogue Nation (2015) | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
+  | 9  | Sabrina (1954)                            | 2                  | 0.1680   | 0.8320          | Comedy \| Romance               | CF                |
+  | 10 | Beauty Shop (2005)                        | 1                  | 0.0832   | 0.9168          | Comedy                          | CF                |
+  
   Model ini mengumpulkan dan menganalisis hasil rekomendasi film dari model hybrid (gabungan CBF dan CF). Setiap film yang direkomendasikan dievaluasi dengan metrik:
   - ILS (Intra-List Similarity) untuk mengukur kemiripan antar film dalam daftar rekomendasi (nilai rendah = rekomendasi lebih beragam).
   - Skor CBF dan CF untuk melihat kontribusi masing-masing metode pada rekomendasi film.
