@@ -131,7 +131,7 @@ EDA dilakukan menggunakan visualisasi distribusi, korelasi antar fitur, dan dete
 
 ### Distribusi Data
 
-**Univariate Analysis**
+<ins><strong>Univariate Analysis<ins><strong>
 
 - Distribusi Rating Film
   - Analisis terhadap kolom `rating` menunjukkan bahwa skor bervariasi antara 0.5 hingga 5.0 dengan interval 0.5. Statistik deskriptifnya sebagai berikut:
@@ -216,7 +216,7 @@ EDA dilakukan menggunakan visualisasi distribusi, korelasi antar fitur, dan dete
 
 
 
-**Multivariate Analysis**
+<ins><strong>Multivariate Analysis<ins><strong>
 
 Beberapa hal yang dilihat pada tahap ini :
 - Analisis untuk melihat hubungan antara **popularitas sebuah film** (diukur dari jumlah rating) dengan **persepsi kualitas** (diukur dari rata-rata rating).
@@ -229,6 +229,7 @@ Interpretasi Statistik:
 ## Data Preparation & Preprosesing
 Pada tahap ini, dilakukan beberapa proses penting untuk menyiapkan data sebelum dilakukan pemodelan, meliputi penggabungan dataset, pengecekan missing value dan duplikasi, sampling data, transformasi fitur, pengambilan fitur, dan genre yang "(no genres listed)" menjadi string kosong, dan encoding dan normalisasi untuk kebutuhan model.
 
+<ins><strong>Preprosesing<ins><strong>
 1. Penggabungan Data
 
     Data ratings_df dan movies_df digabungkan berdasarkan kolom movieId menggunakan metode merge dengan join tipe left. Tujuannya agar setiap rating yang diberikan oleh pengguna dapat dihubungkan dengan informasi film seperti judul dan genre.
@@ -287,8 +288,9 @@ genre_exploded = sample_df.explode('genres')
       observed=True
   )
  ```
+<ins><strong>Preparation<ins><strong>
 
-6. Data Preparation untuk Model Content-Based
+1. Data Preparation untuk Model Content-Based
 
     Prosesnya mencakup :
     
@@ -313,7 +315,7 @@ genre_exploded = sample_df.explode('genres')
     
     TF-IDF matrix yang terbentuk memiliki dimensi **[jumlah_film x jumlah_kata_unik]**, di mana setiap nilai menunjukkan pentingnya suatu kata dalam mendeskripsikan film tertentu.
 
-7. Data Preparation untuk Model Collaborative Filtering
+2. Data Preparation untuk Model Collaborative Filtering
 
 
     a. Encoding
@@ -378,12 +380,10 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
       | --------------------- | ----------------------------------------------------------------------------- | ----------------------------------- |
       | **TF-IDF Vectorizer** | Mengubah fitur teks menjadi representasi numerik berbasis bobot kata penting. | `text_features`: genre + judul film |
       | **Cosine Similarity** | Mengukur kemiripan antar film berdasarkan vektor hasil TF-IDF.                | Matriks TF-IDF antar film           |
-  
-  
-  **Proses Detail Modeling**
-  
-  1. Menghitung Kemiripan Antar Pengguna
-      
+
+   **Proses Detail Modeling**
+
+   1. Menghitung Kemiripan Antar Pengguna
       Cosine similarity menghitung sudut antar dua vektor (semakin kecil sudut, semakin mirip). Jika dua film memiliki genre yang sangat mirip, maka nilai cosine similarity-nya mendekati 1. Matriks cosine_sim berbentuk **[jumlah_film x jumlah_film]** → setiap nilai menunjukkan tingkat kemiripan antar dua film. Untuk setiap pengguna, sistem mencari film yang paling mirip dengan film-film yang telah mereka tonton.
     ```python
     cosine_sim = cosine_similarity(tfidf_matrix)
@@ -393,8 +393,9 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
     columns=filtered_movies['title']
     )
     ```
- 2.  Output (Hasil Rekomendasi CBF)
-    ```python
+   2. Output (Hasil Rekomendasi CBF)
+      
+   ```python
     **Alur Rekomendasi**
           +----------------------+
           | Mulai                |
@@ -461,17 +462,17 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
           | Selesai              |
           +----------------------+
     ```
+      
+    - Penalti Popularitas untuk Novelty
+    
+      Penalti popularitas ini bertujuan untuk mengurangi dominasi film yang sangat populer agar rekomendasi tidak didominasi film mainstream saja. Skor prediksi similarity antar film dikurangi dengan nilai popularitas yang sudah dinormalisasi, dikalikan faktor alpha (misalnya 0.6). Sehingga film yang jarang ditonton atau kurang populer tetap punya peluang muncul dalam daftar rekomendasi. Ini meningkatkan nilai novelty karena rekomendasi menjadi lebih berisi film yang mungkin belum banyak diketahui pengguna namun tetap relevan.
 
-      - Penalti Popularitas untuk Novelty
+    - Reranking dengan Penalti Genre untuk Diversity
 
-        Penalti popularitas ini bertujuan untuk mengurangi dominasi film yang sangat populer agar rekomendasi tidak didominasi film mainstream saja. Skor prediksi similarity antar film dikurangi dengan nilai popularitas yang sudah dinormalisasi, dikalikan faktor alpha (misalnya 0.6). Sehingga film yang jarang ditonton atau kurang populer tetap punya peluang muncul dalam daftar rekomendasi. Ini meningkatkan nilai novelty karena rekomendasi menjadi lebih berisi film yang mungkin belum banyak diketahui pengguna namun tetap relevan.
+      Setelah mendapatkan kandidat rekomendasi berdasarkan similarity dan penalti popularitas, dilakukan proses reranking untuk menjaga keberagaman genre. Penalti genre dihitung dengan menghitung tumpang tindih genre film kandidat dengan film-film yang sudah terpilih di rekomendasi. Faktor penalti lambda digunakan sebagai bobot untuk mengurangi skor kandidat yang genre-nya terlalu mirip dengan film yang sudah ada, sehingga mendorong masuknya film dengan genre berbeda. Ini menghasilkan daftar rekomendasi yang lebih beragam secara genre, meningkatkan diversity.
 
-      - Reranking dengan Penalti Genre untuk Diversity
+    - Hasil TOP N Rekomendasi CBF
 
-        Setelah mendapatkan kandidat rekomendasi berdasarkan similarity dan penalti popularitas, dilakukan proses reranking untuk menjaga keberagaman genre. Penalti genre dihitung dengan menghitung tumpang tindih genre film kandidat dengan film-film yang sudah terpilih di rekomendasi. Faktor penalti lambda digunakan sebagai bobot untuk mengurangi skor kandidat yang genre-nya terlalu mirip dengan film yang sudah ada, sehingga mendorong masuknya film dengan genre berbeda. Ini menghasilkan daftar rekomendasi yang lebih beragam secara genre, meningkatkan diversity.
-
-      - Hasil TOP N Rekomendasi CBF
-        
       | No | Judul Film                    | Genre               | Similarity ke Film Utama | Diversity Score (1 - Similarity) |
       | -- | ----------------------------- | ------------------- | ------------------------ | -------------------------------- |
       | 1  | The Twin (1984)               | Comedy              | 0.4674                   | 0.5326                           |
@@ -485,11 +486,11 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
       | 9  | Knick Knack (1989)            | Animation, Children | 0.1216                   | 0.8784                           |
       | 10 | Inspector General, The (1949) | Musical             | 0.0000                   | 1.0000                           |
 
-   Berdasarkan fitur acak didapat film utama yang terpilih adalah Twin Peaks (1989) dengan genre Drama dan Mystery. Rekomendasi film untuk setiap user yang menonton film ini akan disajikan film dari genre yang sangat bervariasi mulai dari Comedy, Thriller, Horror, Action, Documentary, hingga Musical. Setiap film yang direkomendasikan memiliki skor similarity yang cukup tinggi untuk memastikan relevansi dengan film utama, tetapi juga diimbangi dengan penalti genre agar film yang muncul tidak terlalu homogen.
+      Berdasarkan fitur acak didapat film utama yang terpilih adalah Twin Peaks (1989) dengan genre Drama dan Mystery. Rekomendasi film untuk setiap user yang menonton film ini akan disajikan film dari genre yang sangat bervariasi mulai dari Comedy, Thriller, Horror, Action, Documentary, hingga Musical. Setiap film yang direkomendasikan memiliki skor similarity yang cukup tinggi untuk memastikan relevansi dengan film utama, tetapi juga diimbangi dengan penalti genre agar film yang muncul tidak terlalu homogen.
    
-   - Statistik Rating Film Rekomendasi
+    - Statistik Rating Film Rekomendasi
 
-        Selain similarity dan diversity, daftar rekomendasi ini juga memperhatikan kualitas rating rata-rata dan jumlah rating untuk menjaga rekomendasi yang tidak hanya unik tapi juga berkualitas.
+      Selain similarity dan diversity, daftar rekomendasi ini juga memperhatikan kualitas rating rata-rata dan jumlah rating untuk menjaga rekomendasi yang tidak hanya unik tapi juga berkualitas.
 
         | movieId | avg\_rating | num\_ratings | title                   |
         | ------- | ----------- | ------------ | ----------------------- |
@@ -504,22 +505,22 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
         | 130808  | 2.0         | 1            | River of Death (1989)   |
         | 34189   | 1.5         | 1            | Twin Sitters (1994)     |
 
-
      Hasil yang direkomendasikan :
      - Film rekomendasi dipilih tidak hanya berdasarkan similarity atau rating tinggi, tapi juga mempertimbangkan novelty (film kurang populer tapi relevan) dan diversity (genre bervariasi).
      - Penalti popularitas membuat rekomendasi tidak didominasi film-film mainstream.
      - Penalti genre membuat rekomendasi beragam secara tema dan genre, sehingga user mendapat pilihan film yang kaya dan berwarna, tidak monoton.
      - Output menampilkan keseimbangan antara kedekatan film utama dan keberagaman rekomendasi.
+   
        
 Kelebihan CBF
-    - Personal dan spesifik: Rekomendasi sepenuhnya disesuaikan dengan preferensi unik pengguna.
-    - Tidak butuh data pengguna lain: Model tetap bekerja meskipun pengguna adalah satu-satunya di sistem.
-    - Transparan: Dapat dijelaskan kenapa sebuah item direkomendasikan (berdasarkan kesamaan genre atau judul).
+- Personal dan spesifik: Rekomendasi sepenuhnya disesuaikan dengan preferensi unik pengguna.
+- Tidak butuh data pengguna lain: Model tetap bekerja meskipun pengguna adalah satu-satunya di sistem.
+- Transparan: Dapat dijelaskan kenapa sebuah item direkomendasikan (berdasarkan kesamaan genre atau judul).
     
 Kekurangan CBF
-    - Over-specialization: Cenderung merekomendasikan film yang terlalu mirip, sehingga sulit mengeksplorasi genre baru.
-    - Cold-start untuk item baru: Jika item tidak memiliki deskripsi konten yang cukup, tidak dapat direkomendasikan.
-    - Terbatas pada informasi yang tersedia: Jika data film kurang lengkap atau tidak representatif, hasil rekomendasi bisa kurang optimal.
+- Over-specialization: Cenderung merekomendasikan film yang terlalu mirip, sehingga sulit mengeksplorasi genre baru.
+- Cold-start untuk item baru: Jika item tidak memiliki deskripsi konten yang cukup, tidak dapat direkomendasikan.
+- Terbatas pada informasi yang tersedia: Jika data film kurang lengkap atau tidak representatif, hasil rekomendasi bisa kurang optimal.
 
 2. <ins><strong>Collaborative Filtering (CF)<strong><ins>
    
@@ -586,9 +587,9 @@ Kekurangan CBF
 
       ![dot_product](https://github.com/user-attachments/assets/81dba515-0f10-473a-b16d-13f7c565d29e)
 
-      - Hasil ini adalah prediksi skor preferensi pengguna \( u \) terhadap film \( m \).
+      - Hasil berupa prediksi skor preferensi pengguna \( u \) terhadap film \( m \).
         
-  3. Compile Model
+  4. Compile Model
      
        Model ini dilatih menggunakan fungsi loss binary_crossentropy, dengan optimizer Adam dan learning rate 0.0005 untuk meminimalkan kesalahan prediksi dalam bentuk probabilitas rating yang telah dinormalisasi ke rentang [0,1].
 
@@ -614,7 +615,7 @@ Kekurangan CBF
       )
       ```
      
-  4. Training Model dengan Early Stopping
+  5. Training Model dengan Early Stopping
      
      Model dilatih hingga **50 epoch**, namun akan berhenti lebih awal dengan fungsi dari **early_stop** sehingga pelatihan menjadi lebih efisien karena tidak membuang waktu melakukan training saat model sudah tidak menunjukkan peningkatan performa, sekaligus mengurangi risiko overfitting pada data training.
 
@@ -631,108 +632,104 @@ Kekurangan CBF
       )
       ```
       
-  5. Evaluasi Metrik
-     
-      - Grafik menunjukkan penurunan RMSE yang stabil pada data training dan validation.
-    - Train RMSE menurun signifikan dari awal hingga epoch 8, menunjukkan model belajar dengan baik dari data.
-    - Val RMSE juga menurun, meskipun lebih lambat, tanpa indikasi overfitting (tidak ada kenaikan drastis pada Val RMSE).
-    - Gap Train-Val RMSE relatif kecil, menunjukkan model cukup stabil dan generalizable untuk data baru.
-    - Secara keseluruhan, model Collaborative Filtering ini menunjukkan performa yang baik dan tidak overfit terhadap data training.
+  6. Evaluasi Metrik
+     - Grafik menunjukkan penurunan RMSE yang stabil pada data training dan validation.
+     - Train RMSE menurun signifikan dari awal hingga epoch 8, menunjukkan model belajar dengan baik dari data.
+     - Val RMSE juga menurun, meskipun lebih lambat, tanpa indikasi overfitting (tidak ada kenaikan drastis pada Val RMSE).
+     - Gap Train-Val RMSE relatif kecil, menunjukkan model cukup stabil dan generalizable untuk data baru.
+     - Secara keseluruhan, model Collaborative Filtering ini menunjukkan performa yang baik dan tidak overfit terhadap data training.
     
 ![model_metrik](https://github.com/user-attachments/assets/80298756-31cb-49b0-84dd-5d2ec3e77be9)
 
 ![RSME_metrik](https://github.com/user-attachments/assets/6434ca4b-61c7-424f-9666-5ea71d0dc75c)
     
-  6. Output (Hasil Rekomendasi CF)
+  7. Output (Hasil Rekomendasi CF)
+    ```python
+    **Alur Rekomendasi**
+            +--------------------------+
+            | Mulai: Pilih user acak   |
+            +--------------------------+
+                      |
+                      v
+            +--------------------------+
+            | Ambil daftar film yang   |
+            | sudah ditonton user      |
+            +--------------------------+
+                      |
+                      v
+            +--------------------------+
+            | Identifikasi film yang   |
+            | belum ditonton           |
+            +--------------------------+
+                      |
+                      v
+            +--------------------------+
+            | Prediksi rating film     |
+            | menggunakan model CF     |
+            +--------------------------+
+                      |
+                      v
+            +--------------------------+
+            | Hitung penalti popularitas|
+            | dan hitung skor novelty  |
+            +--------------------------+
+                      |
+                      v
+            +--------------------------+
+            | Reranking film untuk     |
+            | meningkatkan diversity   |
+            | (penalti genre tumpang-  |
+            | tindih)                 |
+            +--------------------------+
+                      |
+                      v
+            +--------------------------+
+            | Hasil rekomendasi Top-N  |
+            +--------------------------+
+                      |
+                      v
+            +--------------------------+
+            | Tampilkan hasil ke user  |
+            +--------------------------+
+    ```
 
-```python
+     - Penalti Popularitas untuk Novelty
+     Mengukur seberapa banyak rekomendasi terdiri dari item yang baru, tidak umum, atau jarang diketahui oleh pengguna. Dengan penalti popularitas, rekomendasi berfokus tidak hanya pada film populer, tetapi juga film dengan interaksi rendah yang tetap relevan. Dengan implementasi skor prediksi rating dikurangi dengan nilai normalisasi popularitas film (pop_norm) dikalikan faktor penalti (misal 0.3) film dengan popularitas tinggi mendapatkan penalti sehingga film kurang populer yang relevan berpeluang muncul lebih banyak, meningkatkan novelty (kebaruan).
 
-**Alur Rekomendasi**
+     - Reranking dengan Penalti Genre untuk Diversity
+    Mengukur variasi karakteristik (genre, tema, style) film dalam daftar rekomendasi. Reranking dengan penalti genre mencegah dominasi genre tertentu, sehingga daftar rekomendasi menyajikan pilihan yang lebih kaya dan beragam. Dengan parameter Lambda (λ)  sebagai faktor pengali penalti genre untuk menyeimbangkan antara skor prediksi dan keberagaman genre dan Top-N sebagai variabel Jumlah film yang direkomendasikan (misal 10), mendorong masuknya film dari genre yang berbeda sehingga meningkatkan diversity (keberagaman) dalam rekomendasi.
 
-        +--------------------------+
-        | Mulai: Pilih user acak   |
-        +--------------------------+
-                  |
-                  v
-        +--------------------------+
-        | Ambil daftar film yang   |
-        | sudah ditonton user      |
-        +--------------------------+
-                  |
-                  v
-        +--------------------------+
-        | Identifikasi film yang   |
-        | belum ditonton           |
-        +--------------------------+
-                  |
-                  v
-        +--------------------------+
-        | Prediksi rating film     |
-        | menggunakan model CF     |
-        +--------------------------+
-                  |
-                  v
-        +--------------------------+
-        | Hitung penalti popularitas|
-        | dan hitung skor novelty  |
-        +--------------------------+
-                  |
-                  v
-        +--------------------------+
-        | Reranking film untuk     |
-        | meningkatkan diversity   |
-        | (penalti genre tumpang-  |
-        | tindih)                 |
-        +--------------------------+
-                  |
-                  v
-        +--------------------------+
-        | Hasil rekomendasi Top-N  |
-        +--------------------------+
-                  |
-                  v
-        +--------------------------+
-        | Tampilkan hasil ke user  |
-        +--------------------------+
-```
-
-- Penalti Popularitas untuk Novelty
-Mengukur seberapa banyak rekomendasi terdiri dari item yang baru, tidak umum, atau jarang diketahui oleh pengguna. Dengan penalti popularitas, rekomendasi berfokus tidak hanya pada film populer, tetapi juga film dengan interaksi rendah yang tetap relevan. Dengan implementasi skor prediksi rating dikurangi dengan nilai normalisasi popularitas film (pop_norm) dikalikan faktor penalti (misal 0.3) film dengan popularitas tinggi mendapatkan penalti sehingga film kurang populer yang relevan berpeluang muncul lebih banyak, meningkatkan novelty (kebaruan).
-
-- Reranking dengan Penalti Genre untuk Diversity
-Mengukur variasi karakteristik (genre, tema, style) film dalam daftar rekomendasi. Reranking dengan penalti genre mencegah dominasi genre tertentu, sehingga daftar rekomendasi menyajikan pilihan yang lebih kaya dan beragam. Dengan parameter Lambda (λ)  sebagai faktor pengali penalti genre untuk menyeimbangkan antara skor prediksi dan keberagaman genre dan Top-N sebagai variabel Jumlah film yang direkomendasikan (misal 10), mendorong masuknya film dari genre yang berbeda sehingga meningkatkan diversity (keberagaman) dalam rekomendasi.
-
-- Hasil TOP N Rekomendasi CF
-  | No | Judul Film                  | Genre                                         | Mean Similarity | Diversity Score |
-  | -- | --------------------------- | --------------------------------------------- | --------------- | --------------- |
-  | 1  | North by Northwest (1959)   | Action, Adventure, Mystery, Romance, Thriller | 0.1875          | 0.8125          |
-  | 2  | Sting, The (1973)           | Comedy, Crime                                 | 0.1211          | 0.8789          |
-  | 3  | Hotel Rwanda (2004)         | Drama, War                                    | 0.1458          | 0.8542          |
-  | 4  | Hoop Dreams (1994)          | Documentary                                   | 0.1198          | 0.8802          |
-  | 5  | Brazil (1985)               | Fantasy, Sci-Fi                               | 0.1743          | 0.8257          |
-  | 6  | The Hateful Eight (2015)    | Western                                       | 0.0781          | 0.9219          |
-  | 7  | Get Out (2017)              | Horror                                        | 0.0777          | 0.9223          |
-  | 8  | Prince of Egypt, The (1998) | Animation, Musical                            | 0.1796          | 0.8204          |
-  | 9  | Hereditary (2018)           | (no genres listed)                            | 0.0613          | 0.9387          |
-  | 10 | Kiss Me Deadly (1955)       | Film-Noir                                     | -0.1037         | 1.1037          |
-
-  Model ini menghasilkan Top-10 rekomendasi film untuk user 57215, yang sebelumnya telah menonton Notting Hill (1999) yang memiliki genre Comedy dan Romance. Rekomendasi mencakup film dari berbagai genre seperti Horror, Western, Fantasy, dan Documentary untuk memastikan variasi dan relevansi yang tinggi. Setiap film disertai dengan skor similarity antar film, serta diversity score untuk menunjukkan keberagaman konten rekomendasi.
-
-  Film yang masuk ke daftar rekomendasi:
-      - Memiliki prediksi rating tinggi (dari model CF).
-      - Tidak terlalu populer (penalti novelty).
-      - Genre-nya bervariasi dan tidak saling tumpang tindih.
-
-  
-Kelebihan CF
-- Menangkap hubungan kompleks antara pengguna dan film yang tidak tergambar hanya dari data yang besar.
-- Dapat mempelajari pola implisit dari interaksi rating dalam skala besar.
-- Dukungan fleksibilitas tinggi dengan optimasi dan teknik regularisasi modern.
-
-Kekurangan CF
-- Cold-start problem: Tidak dapat merekomendasikan dengan baik untuk pengguna/film baru yang belum punya interaksi. Karena prediksinya berbasis interaksi pengguna lain.
-- Butuh banyak data: Performanya tinggi jika data interaksi pengguna cukup besar.
-- Kompleksitas komputasi: Lebih berat dibanding model tradisional seperti CBF sederhana.
+     - Hasil TOP N Rekomendasi CF
+       
+      | No | Judul Film                  | Genre                                         | Mean Similarity | Diversity Score |
+      | -- | --------------------------- | --------------------------------------------- | --------------- | --------------- |
+      | 1  | North by Northwest (1959)   | Action, Adventure, Mystery, Romance, Thriller | 0.1875          | 0.8125          |
+      | 2  | Sting, The (1973)           | Comedy, Crime                                 | 0.1211          | 0.8789          |
+      | 3  | Hotel Rwanda (2004)         | Drama, War                                    | 0.1458          | 0.8542          |
+      | 4  | Hoop Dreams (1994)          | Documentary                                   | 0.1198          | 0.8802          |
+      | 5  | Brazil (1985)               | Fantasy, Sci-Fi                               | 0.1743          | 0.8257          |
+      | 6  | The Hateful Eight (2015)    | Western                                       | 0.0781          | 0.9219          |
+      | 7  | Get Out (2017)              | Horror                                        | 0.0777          | 0.9223          |
+      | 8  | Prince of Egypt, The (1998) | Animation, Musical                            | 0.1796          | 0.8204          |
+      | 9  | Hereditary (2018)           | (no genres listed)                            | 0.0613          | 0.9387          |
+      | 10 | Kiss Me Deadly (1955)       | Film-Noir                                     | -0.1037         | 1.1037          |
+    
+      Model ini menghasilkan Top-10 rekomendasi film untuk user 57215, yang sebelumnya telah menonton Notting Hill (1999) yang memiliki genre Comedy dan Romance. Rekomendasi mencakup film dari berbagai genre seperti Horror, Western, Fantasy, dan Documentary untuk memastikan variasi dan relevansi yang tinggi. Setiap film disertai dengan skor similarity antar film, serta diversity score untuk menunjukkan keberagaman konten rekomendasi.
+    
+     Film yang masuk ke daftar rekomendasi:
+     - Memiliki prediksi rating tinggi (dari model CF).
+     - Tidak terlalu populer (penalti novelty).
+     - Genre-nya bervariasi dan tidak saling tumpang tindih.
+     
+     Kelebihan CF
+     - Menangkap hubungan kompleks antara pengguna dan film yang tidak tergambar hanya dari data yang besar.
+     - Dapat mempelajari pola implisit dari interaksi rating dalam skala besar.
+     - Dukungan fleksibilitas tinggi dengan optimasi dan teknik regularisasi modern.
+     
+     Kekurangan CF
+     - Cold-start problem: Tidak dapat merekomendasikan dengan baik untuk pengguna/film baru yang belum punya interaksi. Karena prediksinya berbasis interaksi pengguna lain.
+     - Butuh banyak data: Performanya tinggi jika data interaksi pengguna cukup besar.
+     - Kompleksitas komputasi: Lebih berat dibanding model tradisional seperti CBF sederhana.
 
 4. <ins><strong>Hybrid Model<ins><strong>
 
@@ -747,7 +744,7 @@ Kekurangan CF
   | **Hybrid Fusion**                 | Menggabungkan skor dari CBF dan CF berdasarkan bobot. <br> Melakukan normalisasi skor ke dua metode sebelum penggabungan agar setara. <br> Menghasilkan ranking akhir film sebagai rekomendasi.                                                | `weight_cbf = 40` (sisanya CF)<br>Skor dinormalisasi |
 
 
-  **Note :
+  **Catatan :
   
   Pemilihan proporsi 40% Content-Based Filtering (CBF) dan 60% Collaborative Filtering (CF) pada model Hybrid dilakukan dengan pertimbangan untuk meningkatkan relevansi dan personalisasi rekomendasi, sambil tetap menjaga diversity dan coverage yang baik. Proporsi ini memberikan penekanan lebih pada CF, agar hasil rekomendasi tetap personal dan relevan secara statistik. Namun tidak menghilangkan peran CBF, yang mampu menjembatani cold-start item dan meningkatkan eksplorasi film baru.
 
@@ -764,6 +761,7 @@ Kekurangan CF
   - Penggabungan Skor
     
     Skor CBF dan CF yang sudah dinormalisasi kemudian digabungkan dengan bobot tertentu (misal weight_cbf=0.5) untuk menghasilkan skor akhir rekomendasi film.
+    <br>
 
   **Output TOP N Rekomendasi  Hybrid**
 
@@ -822,6 +820,7 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
 <br>
   Contoh hubungan ILS dan Diversity
   <br>
+  
   | **Mean Similarity (ILS)** | **Diversity Score (1 - ILS)** |
   | ------------------------- | ----------------------------- |
   | 1.00                      | 0.00                          |
@@ -880,7 +879,7 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
 - CBF memberikan cakupan rekomendasi yang luas, tetapi filmnya cenderung mirip satu sama lain.
 - CF menghasilkan rekomendasi paling beragam, tapi hanya untuk sebagian kecil film.
 - Hybrid memberi keseimbangan yang baik antara keberagaman dan cakupan, menjadikannya model yang paling optimal secara keseluruhan.
-- <ins><strong>Hybrid menjadi model terbaik untuk rekomendasi ✅<ins><strong>, karena :
+- **Hybrid menjadi model terbaik untuk rekomendasi ✅**, karena :
   - Model Hybrid menggabungkan keunggulan dari dua pendekatan utama:
     - Collaborative Filtering (CF): Belajar dari pola interaksi pengguna (siapa menyukai apa).
     - Content-Based Filtering (CBF): Memanfaatkan informasi konten (seperti genre, judul, tahun) untuk menilai kesamaan antar film.
@@ -892,36 +891,37 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
     - Menghindari bias terhadap film populer
     - Menyajikan opsi baru yang belum diketahui pengguna
     - Memaksimalkan eksposur katalog film
-
-### **INSIGHT berdasarkan BUSSINES UNDERSTANDING**
-
-
-<ins><strong>Menjawab Problem Statement<ins><strong>
-
-1. **Bagaimana merekomendasikan film yang relevan untuk pengguna berdasarkan riwayat film yang mereka tonton?**
-   
-  Hybrid model menggabungkan pendekatan Content-Based Filtering (CBF) yang memanfaatkan fitur konten film (genre dan judul) dengan Collaborative Filtering (CF) yang mempelajari pola interaksi pengguna. Dengan demikian, model dapat memberikan rekomendasi yang relevan baik dari sisi konten yang serupa (didapat dari model CBF dengan teknik **TF-IDF (Term Frequency-Inverse Document Frequency)** **cosine similarity**) dengan film favorit pengguna maupun dari pola interaksi komunitas pengguna yang mirip (didapat dari model CF yang menggunakan arsitektur RecommenderNet).  
-
-2. **Bagaimana menjaga keragaman dan jangkauan dari hasil rekomendasi agar tidak hanya terbatas pada film populer?**
-   
-  Model hybrid mampu menjaga keseimbangan diversity tetap tinggi (menghindari rekomendasi monoton) dan coverage lebih luas (menjangkau lebih banyak film, termasuk yang kurang terkenal), kemudian menggunakan penalti popularitas dan reranking genre, sehingga mencegah dominasi film populer. Pendekatan ini memastikan rekomendasi mencakup film-film dari berbagai genre dan tingkat popularitas, menghasilkan daftar rekomendasi yang lebih bervariasi dan menarik. 
-
-3. **Bagaimana memberikan rekomendasi film yang tidak hanya relevan, tetapi juga memiliki unsur kebaruan (novelty)?**
-   
-  Hybrid Model menyeimbangkan relevansi dan novelty. Relevansi tetap terjaga karena mempertimbangkan film serupa yang sudah ditonton, Novelty tercapai karena model juga menyarankan film yang mungkin belum diketahui pengguna, tetapi populer di kalangan pengguna dengan selera serupa. Reranking berbasis penalti genre dan popularitas juga membantu menonjolkan film baru yang tetap relevan namun belum umum diketahui.
-
-4. **Bagaimana merekomendasikan film yang rendah interaksi oleh pengguna namun tetap berdasarkan prefrensi pengguna ?**
-   
-  Hybrid Model mengatasi cold-start item dengan baik. Teknik ini menggabungkan kekuatan kedua pendekatan dengan :
-  
-  Skor Gabungan (Fusion): Setiap film diberi skor gabungan dengan α sebagai parameter pengontrol (misal: 0.5 untuk seimbang).
-
-  ![Fusion](https://github.com/user-attachments/assets/6f8cd168-e1c7-42e8-adb8-005a434c07ba)
-
-  Jika CF tidak bisa memberi skor (karena film cold-start), sistem fallback ke skor CBF. Setelah skor gabungan dihitung, sistem melakukan ranking dan memilih top-N rekomendasi. Hasilnya Film dengan interaksi rendah tetap punya peluang muncul di daftar rekomendasi jika mirip secara konten dengan preferensi user (CBF), atau punya embedding yang cukup dari interaksi terbatas (CF), atau kombinasi keduanya. Dengan reranking dan penalty juga film populer diturunkan sedikit peringkatnya, sehingga film cold-start yang relevan punya peluang lebih tinggi muncul.
 <br>
 
-<ins><strong>**Mencapai Goals yang Diharapkan**<ins><strong>
+### <ins><strong>**INSIGHT berdasarkan BUSSINES UNDERSTANDING**<ins><strong>
+ 
+
+<ins><strong>Menjawab PROBLEM STATEMENT<ins><strong>
+
+1. **Bagaimana merekomendasikan film yang relevan untuk pengguna berdasarkan riwayat film yang mereka tonton?**
+
+   Hybrid model menggabungkan pendekatan Content-Based Filtering (CBF) yang memanfaatkan fitur konten film (genre dan judul) dengan Collaborative Filtering (CF) yang mempelajari pola interaksi pengguna. Dengan demikian, model dapat memberikan rekomendasi yang relevan baik dari sisi konten yang serupa (didapat dari model CBF dengan teknik **TF-IDF (Term Frequency-Inverse Document Frequency)** **cosine similarity**) dengan film favorit pengguna maupun dari pola interaksi komunitas pengguna yang mirip (didapat dari model CF yang menggunakan arsitektur RecommenderNet).  
+
+2. **Bagaimana menjaga keragaman dan jangkauan dari hasil rekomendasi agar tidak hanya terbatas pada film populer?**
+
+   Model hybrid mampu menjaga keseimbangan diversity tetap tinggi (menghindari rekomendasi monoton) dan coverage lebih luas (menjangkau lebih banyak film, termasuk yang kurang terkenal), kemudian menggunakan penalti popularitas dan reranking genre, sehingga mencegah dominasi film populer. Pendekatan ini memastikan rekomendasi mencakup film-film dari berbagai genre dan tingkat popularitas, menghasilkan daftar rekomendasi yang lebih bervariasi dan menarik. 
+
+3. **Bagaimana memberikan rekomendasi film yang tidak hanya relevan, tetapi juga memiliki unsur kebaruan (novelty)?**
+
+   Hybrid Model menyeimbangkan relevansi dan novelty. Relevansi tetap terjaga karena mempertimbangkan film serupa yang sudah ditonton, Novelty tercapai karena model juga menyarankan film yang mungkin belum diketahui pengguna, tetapi populer di kalangan pengguna dengan selera serupa. Reranking berbasis penalti genre dan popularitas juga membantu menonjolkan film baru yang tetap relevan namun belum umum diketahui.
+
+4. **Bagaimana merekomendasikan film yang rendah interaksi oleh pengguna namun tetap berdasarkan prefrensi pengguna ?**
+
+   Hybrid Model mengatasi cold-start item dengan baik. Teknik ini menggabungkan kekuatan kedua pendekatan dengan :
+
+   Skor Gabungan (Fusion): Setiap film diberi skor gabungan dengan α sebagai parameter pengontrol (misal: 0.5 untuk seimbang).
+
+   ![Fusion](https://github.com/user-attachments/assets/6f8cd168-e1c7-42e8-adb8-005a434c07ba)
+
+   Jika CF tidak bisa memberi skor (karena film cold-start), sistem fallback ke skor CBF. Setelah skor gabungan dihitung, sistem melakukan ranking dan memilih top-N rekomendasi. Hasilnya Film dengan interaksi rendah tetap punya peluang muncul di daftar rekomendasi jika mirip secara konten dengan preferensi user (CBF), atau punya embedding yang cukup dari interaksi terbatas (CF), atau kombinasi keduanya. Dengan reranking dan penalty juga film populer diturunkan sedikit peringkatnya, sehingga film cold-start yang relevan punya peluang lebih tinggi muncul.
+<br>
+
+<ins><strong>**Mencapai GOALS yang Diharapkan**<ins><strong>
 
 **Goal 1: Menyajikan rekomendasi film yang relevan berdasarkan riwayat tontonan pengguna.**
 
@@ -938,15 +938,15 @@ Melalui proses reranking dengan penalti genre, sistem rekomendasi mampu menguran
 **Goal 4: Mengembangkan mekanisme rekomendasi yang mampu mengidentifikasi dan menyarankan film-film dengan tingkat interaksi rendah namun relevan bagi pengguna,...**
 
 Hybrid model berhasil memadukan keunggulan CBF (berfungsi optimal pada item cold-start) dan CF (memberikan konteks pola pengguna lain) untuk memberikan rekomendasi pada film-film dengan data interaksi rendah (long-tail items) yang relevan dengan minat pengguna. Evaluasi menggunakan metrik Mean Similarity, Diversity, dan Coverage menunjukkan bahwa Hybrid model menunjukkan keseimbangan antara relevansi, keragaman, dan cakupan—kriteria utama dalam recommender system yang kuat dan adaptif terhadap konteks bisnis.
+<br>
 
-<ins><strong>Dampak Solusi Statement<ins><strong>
+<ins><strong>Dampak SOLUSI STATEMENT<ins><strong>
 
 Untuk mewujudkan tujuan proyek, pendekatan yang digunakan adalah sebagai berikut:
 
 - Menggunakan TF-IDF dari genre film dan cosine similarity untuk merekomendasikan film yang mirip dengan yang sudah ditonton pengguna.
-  
-  1. Personalisasi yang Lebih Akurat: Menghasilkan rekomendasi yang sesuai dengan preferensi konten pengguna, terutama berdasarkan genre.
-  2. Mengatasi Cold-Start Item: Film baru (yang belum memiliki banyak interaksi) tetap bisa direkomendasikan selama informasi genre tersedia.
+  a. Personalisasi yang Lebih Akurat: Menghasilkan rekomendasi yang sesuai dengan preferensi konten pengguna, terutama berdasarkan genre.<br>
+  b. Mengatasi Cold-Start Item: Film baru (yang belum memiliki banyak interaksi) tetap bisa direkomendasikan selama informasi genre tersedia.
 
 - Membangun model **Content Based Filtering** yang fokus pada kontent tertentu.
   
@@ -973,10 +973,10 @@ Untuk mewujudkan tujuan proyek, pendekatan yang digunakan adalah sebagai berikut
   Mengurangi Bias ke Film Populer dan meningkatkan ekplorasi. Memperkenalkan film long-tail yang mungkin relevan tapi jarang muncul karena jumlah interaksinya sedikit.
 
 - Melakukan **reranking** dengan penalti genre serupa untuk meningkatkan diversity dalam daftar rekomendasi, sehingga pengguna mendapatkan kombinasi film yang tidak hanya relevan, tapi juga segar dan bervariasi, memperkaya pengalaman eksplorasi konten.
-  1. Menghindari dominasi genre tertentu dalam rekomendasi.
-  2. Pengguna mendapatkan daftar film dari genre yang beragam namun tetap relevan, mendorong eksplorasi lebih luas.
-  3. Memberikan kombinasi rekomendasi yang bersifat personal, baru, dan tidak repetitif.
-  4. Membuat pengguna lebih betah menjelajah katalog, karena rekomendasi terasa dinamis dan tidak kaku.
+  a. Menghindari dominasi genre tertentu dalam rekomendasi.
+  b. Pengguna mendapatkan daftar film dari genre yang beragam namun tetap relevan, mendorong eksplorasi lebih luas.
+  c. Memberikan kombinasi rekomendasi yang bersifat personal, baru, dan tidak repetitif.
+  d. Membuat pengguna lebih betah menjelajah katalog, karena rekomendasi terasa dinamis dan tidak kaku.
 
 ## Kesimpulan
   1. Model rekomendasi hybrid yang dibangun berhasil menggabungkan keunggulan Content-Based Filtering dan Collaborative Filtering untuk menghasilkan rekomendasi yang personal, relevan, dan variatif.
