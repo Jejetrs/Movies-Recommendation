@@ -298,11 +298,14 @@ Pada tahap ini, dilakukan beberapa proses penting untuk menyiapkan data sebelum 
     
     a. Persiapan Data untuk Model Content-Based
     
-    Untuk model content-based, hanya diperlukan kolom movieId, title, dan genres. Genre yang berlabel "(no genres listed)" diganti dengan string kosong agar tidak mengganggu proses analisis.
+    Untuk model content-based, hanya diperlukan kolom movieId, title, dan genres. Genre yang berlabel "(no genres listed)" diganti dengan string kosong agar tidak mengganggu proses hasil vektorisasi yang fokus hanya pada informasi yang relevan (judul dan genre nyata). Kemudian menggabungkan genre dengan tittle menjadi fitur teks untuk memepermudah pengambilan konten bedasarkan genre nantinya.
 
     ```python
     movie_content = movies_df[['movieId', 'title', 'genres']].copy()
     movie_content['genres'] = movie_content['genres'].replace("(no genres listed)", "")
+
+    # genre dan title jadi satu fitur teks
+    filtered_movies['text_features'] = filtered_movies['genres'] + " " + filtered_movies['title']
     ```
 
     b. Membangun User-Item Matrix TF-IDF Vectorization
@@ -312,7 +315,6 @@ Pada tahap ini, dilakukan beberapa proses penting untuk menyiapkan data sebelum 
     ```python
     fidf = TfidfVectorizer(token_pattern=r'[^| ]+', stop_words='english')
     tfidf_matrix = tfidf.fit_transform(filtered_movies['text_features'])
-    print("Ukuran TF-IDF Matrix:", tfidf_matrix.shape)
     ```
     
     TF-IDF matrix yang terbentuk memiliki dimensi **[jumlah_film x jumlah_kata_unik]**, di mana setiap nilai menunjukkan pentingnya suatu kata dalam mendeskripsikan film tertentu.
@@ -394,7 +396,16 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
       columns=filtered_movies['title']
       )
       ```
-   2. Output (Hasil Rekomendasi CBF)
+   
+      | Title                        | Troy (2004) | Unstoppable (2010) | Battle of Shaker Heights | Madras (2014) | J. Edgar (2011) |
+      | ---------------------------- | ----------- | ------------------ | ------------------------ | ------------- | --------------- |
+      | **Troy (2004)**              | **1.000**   | 0.079              | 0.014                    | 0.081         | 0.017           |
+      | **Unstoppable (2010)**       | 0.079       | **1.000**          | 0.016                    | 0.090         | 0.019           |
+      | **Battle of Shaker Heights** | 0.014       | 0.016              | **1.000**                | 0.016         | 0.012           |
+      | **Madras (2014)**            | 0.081       | 0.090              | 0.016                    | **1.000**     | 0.019           |
+      | **J. Edgar (2011)**          | 0.017       | 0.019              | 0.012                    | 0.019         | **1.000**       |
+
+   3. Output (Hasil Rekomendasi CBF)
 
       ```python
       **Alur Rekomendasi**
@@ -474,40 +485,41 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
 
     - Hasil TOP N Rekomendasi CBF
 
-      | No | Judul Film                    | Genre               | Similarity ke Film Utama | Diversity Score (1 - Similarity) |
-      | -- | ----------------------------- | ------------------- | ------------------------ | -------------------------------- |
-      | 1  | The Twin (1984)               | Comedy              | 0.4674                   | 0.5326                           |
-      | 2  | Twin Sitters (1994)           | Thriller            | 0.3457                   | 0.6543                           |
-      | 3  | Twin Falls Idaho (1999)       | Drama               | 0.3182                   | 0.6818                           |
-      | 4  | Society (1989)                | Horror, Mystery     | 0.2590                   | 0.7410                           |
-      | 5  | Punisher, The (1989)          | Action              | 0.1724                   | 0.8276                           |
-      | 6  | River of Death (1989)         | Adventure           | 0.1634                   | 0.8366                           |
-      | 7  | For All Mankind (1989)        | Documentary         | 0.1629                   | 0.8371                           |
-      | 8  | True Believer (1989)          | Crime               | 0.1399                   | 0.8601                           |
-      | 9  | Knick Knack (1989)            | Animation, Children | 0.1216                   | 0.8784                           |
-      | 10 | Inspector General, The (1949) | Musical             | 0.0000                   | 1.0000                           |
+      | No | Judul Film                          | Genre                                  | Similarity ke Film Utama  | Diversity Score (1 - Similarity)  |
+      |----|-------------------------------------|----------------------------------------|---------------------------|-----------------------------------|
+      | 1  | Under Fire (1983)                   | Drama, Thriller, War                   | 0.3985                    | 0.6015                            |
+      | 2  | Krull (1983)                        | Action, Adventure, Fantasy, Sci-Fi     | 0.3444                    | 0.6556                            |
+      | 3  | The Hunger (1983)                   | Horror                                 | 0.3175                    | 0.6825                            |
+      | 4  | Class (1983)                        | Comedy                                 | 0.2476                    | 0.7524                            |
+      | 5  | Mickey's Christmas Carol (1983)     | Animation, Children                    | 0.1541                    | 0.8459                            |
+      | 6  | Sunless (Sans Soleil) (1983)        | Documentary                            | 0.1443                    | 0.8557                            |
+      | 7  | Inspector General, The (1949)       | Musical                                | 0.0000                    | 1.0000                            |
+      | 8  | Madagascar Skin (1995)              | Romance                                | 0.0000                    | 1.0000                            |
+      | 9  | T-Men (1947)                        | Film-Noir                              | 0.0000                    | 1.0000                            |
+      | 10 | Terror in a Texas Town (1958)       | Western                                | 0.0000                    | 1.0000                            |
 
-      Berdasarkan fitur acak didapat film utama yang terpilih adalah Twin Peaks (1989) dengan genre Drama dan Mystery. Rekomendasi film untuk setiap user yang menonton film ini akan disajikan film dari genre yang sangat bervariasi mulai dari Comedy, Thriller, Horror, Action, Documentary, hingga Musical. Setiap film yang direkomendasikan memiliki skor similarity yang cukup tinggi untuk memastikan relevansi dengan film utama, tetapi juga diimbangi dengan penalti genre agar film yang muncul tidak terlalu homogen.
+      Berdasarkan fitur acak didapat film utama yang terpilih adalah Videodrome (1983) dengan genre Fantasy|Horror|Sci-Fi|Thriller. Rekomendasi film untuk setiap user yang menonton film ini akan disajikan film dari genre yang sangat bervariasi mulai dari Comedy, Thriller, Horror, Action, Documentary, hingga Musical. Setiap film yang direkomendasikan beberapa memiliki skor similarity yang cukup tinggi untuk memastikan relevansi dengan film utama, tetapi juga diimbangi dengan similarity yang tidak ada sama sekali yang dihasilkan dari penalti genre yang mana didapatkan dari prefrensi antar pengguna yang dari segi rating atau history tontonan memiliki kesamaan dengan film ini, hal ini dimaksudkan agar film yang muncul tidak terlalu homogen dan mendorong film yang jarang ditonton atau rating rendah tetap direkomendasikan.
    
     - Statistik Rating Film Rekomendasi
 
       Selain similarity dan diversity, daftar rekomendasi ini juga memperhatikan kualitas rating rata-rata dan jumlah rating untuk menjaga rekomendasi yang tidak hanya unik tapi juga berkualitas.
 
-        | movieId | avg\_rating | num\_ratings | title                   |
-        | ------- | ----------- | ------------ | ----------------------- |
-        | 135296  | 4.5         | 1            | The Twin (1984)         |
-        | 963     | 4.0         | 1            | Inspector General, The  |
-        | 95856   | 4.0         | 2            | Knick Knack (1989)      |
-        | 5606    | 3.5         | 1            | Society (1989)          |
-        | 2725    | 2.9         | 5            | Twin Falls Idaho (1999) |
-        | 4636    | 2.375       | 8            | Punisher, The (1989)    |
-        | 3338    | 2.0         | 1            | For All Mankind (1989)  |
-        | 4279    | 2.0         | 2            | True Believer (1989)    |
-        | 130808  | 2.0         | 1            | River of Death (1989)   |
-        | 34189   | 1.5         | 1            | Twin Sitters (1994)     |
+      | No | movieId | avg_rating | num_ratings | Judul Film                         |
+      |----|---------|------------|-------------|------------------------------------|
+      | 1  | 963     | 4.00       | 1           | Inspector General, The (1949)      |
+      | 2  | 1154    | 4.00       | 1           | T-Men (1947)                       |
+      | 3  | 136542  | 4.00       | 1           | Mickey's Christmas Carol (1983)    |
+      | 4  | 6123    | 3.75       | 2           | Sunless (Sans Soleil) (1983)       |
+      | 5  | 7480    | 3.50       | 1           | Under Fire (1983)                  |
+      | 6  | 4275    | 3.50       | 6           | Krull (1983)                       |
+      | 7  | 3550    | 3.25       | 8           | The Hunger (1983)                  |
+      | 8  | 983     | 3.00       | 1           | Madagascar Skin (1995)             |
+      | 9  | 2241    | 2.50       | 3           | Class (1983)                       |
+      | 10 | 1386    | 1.00       | 1           | Terror in a Texas Town (1958)      |
+
 
      Hasil yang direkomendasikan :
-     - Film rekomendasi dipilih tidak hanya berdasarkan similarity atau rating tinggi, tapi juga mempertimbangkan novelty (film kurang populer tapi relevan) dan diversity (genre bervariasi).
+     - Film rekomendasi dipilih tidak hanya berdasarkan similarity atau rating tinggi, tapi juga mempertimbangkan novelty (film kurang populer dengan rating rendah tapi relevan dengan pengguna) dan diversity (genre bervariasi).
      - Penalti popularitas membuat rekomendasi tidak didominasi film-film mainstream.
      - Penalti genre membuat rekomendasi beragam secara tema dan genre, sehingga user mendapat pilihan film yang kaya dan berwarna, tidak monoton.
      - Output menampilkan keseimbangan antara kedekatan film utama dan keberagaman rekomendasi.
@@ -705,20 +717,21 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
         Mengukur variasi karakteristik (genre, tema, style) film dalam daftar rekomendasi. Reranking dengan penalti genre mencegah dominasi genre tertentu, sehingga daftar rekomendasi menyajikan pilihan yang lebih kaya dan beragam. Dengan parameter Lambda (λ)  sebagai faktor pengali penalti genre untuk menyeimbangkan antara skor prediksi dan keberagaman genre dan Top-N sebagai variabel Jumlah film yang direkomendasikan (misal 10), mendorong masuknya film dari genre yang berbeda sehingga meningkatkan diversity (keberagaman) dalam rekomendasi.
 
       - Hasil TOP N Rekomendasi CF
-        | No | Judul Film                  | Genre                                         | Mean Similarity | Diversity Score |
-        | -- | --------------------------- | --------------------------------------------- | --------------- | --------------- |
-        | 1  | North by Northwest (1959)   | Action, Adventure, Mystery, Romance, Thriller | 0.1875          | 0.8125          |
-        | 2  | Sting, The (1973)           | Comedy, Crime                                 | 0.1211          | 0.8789          |
-        | 3  | Hotel Rwanda (2004)         | Drama, War                                    | 0.1458          | 0.8542          |
-        | 4  | Hoop Dreams (1994)          | Documentary                                   | 0.1198          | 0.8802          |
-        | 5  | Brazil (1985)               | Fantasy, Sci-Fi                               | 0.1743          | 0.8257          |
-        | 6  | The Hateful Eight (2015)    | Western                                       | 0.0781          | 0.9219          |
-        | 7  | Get Out (2017)              | Horror                                        | 0.0777          | 0.9223          |
-        | 8  | Prince of Egypt, The (1998) | Animation, Musical                            | 0.1796          | 0.8204          |
-        | 9  | Hereditary (2018)           | (no genres listed)                            | 0.0613          | 0.9387          |
-        | 10 | Kiss Me Deadly (1955)       | Film-Noir                                     | -0.1037         | 1.1037          |
+        | No | Judul Film                                                                      | Genre                          | Mean Similarity | Diversity Score |
+|----|----------------------------------------------------------------------------------|--------------------------------|------------------|------------------|
+| 1  | Sting, The (1973)                                                                | Comedy|Crime                   | 0.1972           | 0.8028           |
+| 2  | Shutter Island (2010)                                                            | Drama|Mystery|Thriller         | 0.2293           | 0.7707           |
+| 3  | Good, the Bad and the Ugly, The (Buono, il brutto, il cattivo, Il) (1966)        | Action|Adventure|Western       | 0.1592           | 0.8408           |
+| 4  | Sound of Music, The (1965)                                                       | Musical|Romance               | 0.1866           | 0.8134           |
+| 5  | Hoop Dreams (1994)                                                               | Documentary                    | 0.1133           | 0.8867           |
+| 6  | Alien (1979)                                                                     | Horror|Sci-Fi                  | 0.1572           | 0.8428           |
+| 7  | Piper (2016)                                                                     | Animation                      | 0.2249           | 0.7751           |
+| 8  | Fantastic Beasts and Where to Find Them (2016)                                   | Fantasy                        | 0.0442           | 0.9558           |
+| 9  | Run Silent Run Deep (1958)                                                       | War                            | 0.1491           | 0.8509           |
+| 10 | Hereditary (2018)                                                                | (no genres listed)             | 0.1329           | 0.8671           |
 
-        Model ini menghasilkan Top-10 rekomendasi film untuk user 57215, yang sebelumnya telah menonton Notting Hill (1999) yang memiliki genre Comedy dan Romance. Rekomendasi mencakup film dari berbagai genre seperti Horror, Western, Fantasy, dan Documentary untuk memastikan variasi dan relevansi yang tinggi. Setiap film disertai dengan skor similarity antar film, serta diversity score untuk menunjukkan keberagaman konten rekomendasi.
+
+        Model ini menghasilkan Top-10 rekomendasi film untuk user 6752 , yang sebelumnya telah menonton 10 film salah satunya 10,000 BC (2008) dengan genre Adventure|Romance|Thriller. Rekomendasi mencakup film dari berbagai genre seperti Drama, Mystery, Action, Adventure hingga genre yang tidak diketahui genrenya ini karena selain genre model juga mengambil dan mempertimbangkan fitur lain seperti rating untuk memastikan variasi dan relevansi yang tinggi. Setiap film disertai dengan skor similarity antar film, serta diversity score untuk menunjukkan keberagaman konten rekomendasi.
 
         Film yang masuk ke daftar rekomendasi:
         - Memiliki prediksi rating tinggi (dari model CF).
@@ -763,24 +776,31 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
 
      Skor CBF dan CF yang sudah dinormalisasi kemudian digabungkan dengan bobot tertentu (misal weight_cbf=0.5) untuk menghasilkan skor akhir rekomendasi film.
    **Output TOP N Rekomendasi  Hybrid**
-     | No | Title                                     | #Times Recommended | Mean ILS | Diversity Score | Genre                           | Feature Dominance |
-     | -- | ----------------------------------------- | ------------------ | -------- | --------------- | ------------------------------- | ----------------- |
-     | 1  | Hot Tub Time Machine 2 (2015)             | 2                  | 0.0900   | 0.9100          | Comedy \| Sci-Fi                | CF                |
-     | 2  | True Crime (1999)                         | 2                  | 0.0819   | 0.9181          | Crime \| Thriller               | CF                |
-     | 3  | Dead Man (1995)                           | 2                  | 0.1212   | 0.8788          | Drama \| Mystery \| Western     | CF                |
-     | 4  | Mission: Impossible III (2006)            | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
-     | 5  | Carrie (2002)                             | 2                  | 0.0644   | 0.9356          | Drama \| Horror \| Thriller     | CF                |
-     | 6  | Mission: Impossible - Fallout (2018)      | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
-     | 7  | Gladiator (1992)                          | 2                  | 0.1137   | 0.8863          | Action \| Drama                 | CF                |
-     | 8  | Mission: Impossible - Rogue Nation (2015) | 2                  | 0.0737   | 0.9263          | Action \| Adventure \| Thriller | CF                |
-     | 9  | Sabrina (1954)                            | 2                  | 0.1680   | 0.8320          | Comedy \| Romance               | CF                |
-     | 10 | Beauty Shop (2005)                        | 1                  | 0.0832   | 0.9168          | Comedy                          | CF                |
+
+     | **Title**                                 | **#Times Recommended** | **Mean ILS** | **Diversity Score** | **Genre**                   | **Feature Dominance** |
+| ----------------------------------------- | ---------------------- | ------------ | ------------------- | --------------------------- | --------------------- |
+| Mission: Impossible - Rogue Nation (2015) | 2                      | 0.1358       | 0.8642              | Action\|Adventure\|Thriller | CF                    |
+| True Grit (1969)                          | 2                      | 0.0982       | 0.9018              | Adventure\|Drama\|Western   | CF                    |
+| Mission: Impossible III (2006)            | 2                      | 0.1358       | 0.8642              | Action\|Adventure\|Thriller | CF                    |
+| Mission: Impossible - Fallout (2018)      | 2                      | 0.1358       | 0.8642              | Action\|Adventure\|Thriller | CF                    |
+| Gladiator (1992)                          | 2                      | 0.1215       | 0.8785              | Action\|Drama               | CF                    |
+| Sabrina (1954)                            | 2                      | 0.1652       | 0.8348              | Comedy\|Romance             | CF                    |
+| True Crime (1999)                         | 2                      | 0.1159       | 0.8841              | Crime\|Thriller             | CF                    |
+| 2048: Nowhere to Run (2017)               | 1                      | 0.4234       | 0.5766              | Sci-Fi\|Thriller            | CF                    |
+| Roger & Me (1989)                         | 1                      | 0.1133       | 0.8867              | Documentary                 | CF                    |
+| The Beauty Inside (2015)                  | 1                      | 0.1377       | 0.8623              | Fantasy\|Romance            | CF                    |
+
   
-  Model ini mengumpulkan dan menganalisis hasil rekomendasi film dari model hybrid (gabungan CBF dan CF). Setiap film yang direkomendasikan dievaluasi dengan metrik:
+Setiap film yang direkomendasikan dievaluasi dengan metrik:
   - ILS (Intra-List Similarity) untuk mengukur kemiripan antar film dalam daftar rekomendasi (nilai rendah = rekomendasi lebih beragam).
   - Skor CBF dan CF untuk melihat kontribusi masing-masing metode pada rekomendasi film.
   - Diversity Score dihitung dari 1 - Mean ILS, menandakan keragaman rekomendasi.
   - Feature Dominance menunjukkan apakah CBF atau CF yang lebih dominan dalam merekomendasikan film tersebut.
+
+Maka berdasarkan metrik tersebut didapatkan informasi rekomendasi dari tabel berupa :
+- Film True Grit (1969) memiliki nilai diversity score tertinggi (0.9018), artinya rekomendasi ini memberikan kontribusi yang baik dalam memperluas jenis tontonan pengguna.
+- Film dengan genre Action|Adventure|Thriller, khususnya dari seri Mission: Impossible, sering muncul. Ini menunjukkan pola preferensi pengguna atau kekuatan genre tersebut dalam model CF.
+- Film 2048: Nowhere to Run (2017) memiliki nilai ILS tertinggi (0.4234) dan diversity paling rendah, menandakan film ini paling mirip dengan film lain yang direkomendasikan, sehingga berpotensi menurunkan keragaman tontonan.
 
 ## Evaluation
 
