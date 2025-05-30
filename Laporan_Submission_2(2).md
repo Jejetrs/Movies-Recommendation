@@ -205,7 +205,7 @@ EDA dilakukan menggunakan visualisasi distribusi, korelasi antar fitur, dan dete
   
 ![distribusi_genre_film](https://github.com/user-attachments/assets/60b2b2d9-07a2-440a-be3d-e48cbca38880)
 
-- ✅ Insight Keseluruhan
+- ✅ Insight Keseluruhan Univariate
   - Rating cenderung positif dengan dominasi skor 3.0–4.0.
   - Sebagian kecil film mendominasi dalam jumlah rating.
   - Film populer umumnya juga memiliki rating rata-rata tinggi.
@@ -213,18 +213,22 @@ EDA dilakukan menggunakan visualisasi distribusi, korelasi antar fitur, dan dete
 
   Insight ini sangat berguna untuk membangun sistem rekomendasi yang **terpersonalisasi**, baik berbasis **interaksi pengguna** maupun **konten film**.
 
-
-
-
 <ins><strong>Multivariate Analysis<ins><strong>
 
 Beberapa hal yang dilihat pada tahap ini :
 - Analisis untuk melihat hubungan antara **popularitas sebuah film** (diukur dari jumlah rating) dengan **persepsi kualitas** (diukur dari rata-rata rating).
 - Plot persebaran rata-rata rating terhadap jumlah rating setiap film.
 
-Interpretasi Statistik:
-- Rata-rata rating film populer cenderung stabil di sekitar 4.0.
-- Film dengan sedikit rating → tidak cukup representatif → tidak dapat dipercaya sepenuhnya kualitasnya.
+![rata-rata_ratin_vs_jumlah_rating](https://github.com/user-attachments/assets/df6e4023-8666-4c7e-b1a9-a4e5b090474b)
+![rating_jumlah_genre](https://github.com/user-attachments/assets/c4090b0a-27ec-42ff-b5bb-7cb181a576fd)
+
+Interpretasi :
+- Genre Terpopuler: Drama dan Comedy mendominasi jumlah rating, cocok untuk pengguna baru.
+- Genre Spesifik: Film-Noir, Documentary, dan Western memiliki rating rendah, menandakan audiens yang lebih terbatas.
+- Pola Umum: Genre populer sering diproduksi dan punya jangkauan luas, sementara genre niche lebih khusus dan menarik segmen tertentu.
+- Implikasi untuk Rekomendasi:
+    - Sistem bisa bias ke genre populer. sehingga nantinya model dapat fokus pada menjaga *diversitas* dan memberi eksposur ke genre kurang populer namun sesuai preferensi pengguna.
+    - Adanya non genre listed yang berarti tidak ada genre didalamnya, maka perlu dilakukan preproseing agar tidak mempengaruhi model.
 
 ## Data Preparation & Preprosesing
 Pada tahap ini, dilakukan beberapa proses penting untuk menyiapkan data sebelum dilakukan pemodelan, meliputi penggabungan dataset, pengecekan missing value dan duplikasi, sampling data, transformasi fitur, pengambilan fitur, dan genre yang "(no genres listed)" menjadi string kosong, dan encoding dan normalisasi untuk kebutuhan model.
