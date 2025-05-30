@@ -234,7 +234,7 @@ Interpretasi :
 Pada tahap ini, dilakukan beberapa proses penting untuk menyiapkan data sebelum dilakukan pemodelan, meliputi penggabungan dataset, pengecekan missing value dan duplikasi, sampling data, transformasi fitur, pengambilan fitur, dan genre yang "(no genres listed)" menjadi string kosong, dan encoding dan normalisasi untuk kebutuhan model.
 
 <ins><strong>Preprosesing<ins><strong>
-1. Penggabungan Data
+1. Penggabungan Data ratings_df dan movies_df
 
     Data ratings_df dan movies_df digabungkan berdasarkan kolom movieId menggunakan metode merge dengan join tipe left. Tujuannya agar setiap rating yang diberikan oleh pengguna dapat dihubungkan dengan informasi film seperti judul dan genre.
 
