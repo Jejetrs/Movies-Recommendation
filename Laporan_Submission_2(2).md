@@ -387,6 +387,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
    **Proses Detail Modeling**
 
    1. Menghitung Kemiripan Antar Pengguna
+
       Cosine similarity menghitung sudut antar dua vektor (semakin kecil sudut, semakin mirip). Jika dua film memiliki genre yang sangat mirip, maka nilai cosine similarity-nya mendekati 1. Matriks cosine_sim berbentuk **[jumlah_film x jumlah_film]** → setiap nilai menunjukkan tingkat kemiripan antar dua film. Untuk setiap pengguna, sistem mencari film yang paling mirip dengan film-film yang telah mereka tonton.
       ```python
       cosine_sim = cosine_similarity(tfidf_matrix)
@@ -529,7 +530,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
    - Personal dan spesifik: Rekomendasi sepenuhnya disesuaikan dengan preferensi unik pengguna.
    - Tidak butuh data pengguna lain: Model tetap bekerja meskipun pengguna adalah satu-satunya di sistem.
    - Transparan: Dapat dijelaskan kenapa sebuah item direkomendasikan (berdasarkan kesamaan genre atau judul).
-   
+
    Kekurangan CBF
    - Over-specialization: Cenderung merekomendasikan film yang terlalu mirip, sehingga sulit mengeksplorasi genre baru.
    - Cold-start untuk item baru: Jika item tidak memiliki deskripsi konten yang cukup, tidak dapat direkomendasikan.
@@ -541,21 +542,25 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
 
    **Arsitektur Model**
 
-   Model ini menggunakan arsitektur **RecommenderNet** dengan pendekatan neural collaborative filtering, dengan komponen utama (parameter) sebagai berikut:
+   Model ini menggunakan arsitektur **RecommenderNet** dengan pendekatan neural collaborative filtering,  komponen utama (parameter) sebagai berikut:
 
-    | **Komponen**                     | **Fungsi**                                                                                                                                                                                                       |
-    |----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-    | **Embedding**                    | Mengubah ID pengguna dan ID film menjadi vektor berdimensi 150 di ruang laten. Vektor ini mencerminkan karakteristik tersembunyi (laten) yang dipelajari dari data rating.                                   |
-    | **User Bias & Movie Bias**       | Menangkap kecenderungan pengguna dalam memberi rating (tinggi/rendah) dan kecenderungan film (umumnya disukai atau tidak). Komponen ini membantu meningkatkan akurasi prediksi.                                |
-    | **Dot Product**                  | Menghitung kecocokan antara pengguna dan film dengan menjumlahkan hasil perkalian elemen-elemen embedding pengguna dan film. Semakin tinggi hasilnya, semakin besar kemungkinan pengguna menyukai film tersebut. |
-    | **Dropout Layer**                | Digunakan untuk mengurangi risiko overfitting, terutama dalam proses pelatihan embedding dengan cara menonaktifkan sebagian neuron secara acak saat training.                                                  |
-    | **Activation Function: Sigmoid** | Karena rating dinormalisasi ke rentang [0,1], sigmoid digunakan agar output prediksi tetap dalam rentang tersebut, menjadikannya cocok untuk regresi nilai rating.                                              |
-
+   | Parameter / Komponen  | Ketentuan                                    |
+   |----------------------|-----------------------------------------------|
+   | Embedding            | 150 dimensi                                   |
+   | Dropout Layer        | Rate 0.2                                      |
+   | Activation Sigmoid   | label dinormalisasi ke [0,1]                  |
+   | Loss Function        | binary_crossentropy                           |
+   | Optimizer            | Adam, lr=0.0005                               |
+   | Metrics              | RMSE                                          |
+   | Batch Size           | 128                                           |
+   | Epochs               | Max 50                                        |
+   | EarlyStopping        | Patience=5                                    |
+   
     **Proses Modeling**
 
    1. User & Movie Embedding
       
-      Setiap pengguna dan film direpresentasikan sebagai vektor embedding berdimensi 150. Embedding ini menangkap karakteristik tersembunyi berdasarkan pola interaksi historis dan memetakan setiap film ke dalam vektor representasi.
+      Setiap pengguna dan film direpresentasikan sebagai vektor embedding berdimensi 150. Embedding ini mengubah ID pengguna dan ID film menjadi vektor berdimensi 150 di ruang laten. Vektor ini mencerminkan karakteristik tersembunyi (laten) yang dipelajari dari data rating sehingga enangkap karakteristik tersembunyi berdasarkan pola interaksi historis dan memetakan setiap film ke dalam vektor representasi.   
 
       ```python
       self.user_embedding = layers.Embedding(
@@ -574,7 +579,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
       ```
    2. User & Movie Bias
       
-      Setiap pengguna dan film memiliki bias yang merepresentasikan kecenderungan rating umum yang mereka berikan (user bias) dan rating yang mereka terima (movie bias). Bias ini ditambahkan agar prediksi rating lebih akurat. Bobot bias per film untuk mengatasi perbedaan popularitas atau kualitas film.
+      Setiap pengguna dan film memiliki bias yang merepresentasikan kecenderungan rating umum yang mereka berikan (user bias) dan rating yang mereka terima (movie bias). Bias ini ditambahkan agar prediksi rating lebih akurat. Bobot bias per film untuk mengatasi perbedaan popularitas atau kualitas film. Bias akan Menangkap kecenderungan pengguna dalam memberi rating (tinggi/rendah) dan kecenderungan film (umumnya disukai atau tidak). Komponen ini membantu meningkatkan akurasi prediksi.     
 
       ```python
       self.user_bias = layers.Embedding(input_dim=num_users, output_dim=1)
@@ -582,7 +587,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
       ```
    3. Prediksi Rating dengan Dot Product
       
-      Prediksi rating dihitung dengan melakukan dot product antara vektor embedding pengguna dan film, lalu ditambahkan bias masing-masing.
+      Prediksi rating dihitung dengan melakukan dot product antara vektor embedding pengguna dan film, lalu ditambahkan bias masing-masing. Dot product akan menghitung kecocokan antara pengguna dan film dengan menjumlahkan hasil perkalian elemen-elemen embedding pengguna dan film. Semakin tinggi hasilnya, semakin besar kemungkinan pengguna menyukai film tersebut.
 
       ```python
       def call(self, inputs):
@@ -618,8 +623,10 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
 
       - Loss function adalah metrik yang digunakan untuk mengukur seberapa jauh prediksi model berbeda dari nilai target (rating sebenarnya yang sudah dinormalisasi). Loss function ini memberikan “sinyal” kepada model agar dapat memperbaiki prediksinya selama proses pelatihan.
       - Fungsi binary_crossentropy dipilih karena output model berupa probabilitas (nilai antara 0 dan 1), sehingga cocok untuk mengukur perbedaan distribusi probabilitas antara prediksi dan target.
+      - Optimizer Adam untuk memperbarui bobot model (embedding dan bias) secara adaptif agar nilai loss berangsur-angsur mengecil dan model dapat belajar dengan efisien.
       - Metrik Root Mean Squared Error (RMSE) untuk mengevaluasi performa model secara numerik. RMSE adalah akar dari rata-rata kuadrat selisih antara nilai prediksi dengan nilai sebenarnya.
-        Formula :
+
+      Formula :
 
       ![RSME](https://github.com/user-attachments/assets/dd568bf7-a874-4d1b-9c28-48339c5f1af2)
 
@@ -627,7 +634,6 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
       - Kuadrat selisih memastikan bahwa error negatif dan positif sama-sama dihitung sebagai nilai positif.
       - Memberikan penalti lebih besar pada error yang besar, sehingga model terdorong untuk meminimalkan kesalahan prediksi signifikan.
       - Cocok untuk mengukur kualitas prediksi dalam masalah regresi seperti prediksi rating film.
-      - Optimizer Adam bertugas memperbarui bobot model (embedding dan bias) secara adaptif agar nilai loss berangsur-angsur mengecil dan model dapat belajar dengan efisien.
      
    5. Training Model dengan Early Stopping
       
@@ -717,19 +723,19 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
         Mengukur variasi karakteristik (genre, tema, style) film dalam daftar rekomendasi. Reranking dengan penalti genre mencegah dominasi genre tertentu, sehingga daftar rekomendasi menyajikan pilihan yang lebih kaya dan beragam. Dengan parameter Lambda (λ)  sebagai faktor pengali penalti genre untuk menyeimbangkan antara skor prediksi dan keberagaman genre dan Top-N sebagai variabel Jumlah film yang direkomendasikan (misal 10), mendorong masuknya film dari genre yang berbeda sehingga meningkatkan diversity (keberagaman) dalam rekomendasi.
 
       - Hasil TOP N Rekomendasi CF
-        | No | Judul Film                                                                      | Genre                          | Mean Similarity | Diversity Score |
-|----|----------------------------------------------------------------------------------|--------------------------------|------------------|------------------|
-| 1  | Sting, The (1973)                                                                | Comedy|Crime                   | 0.1972           | 0.8028           |
-| 2  | Shutter Island (2010)                                                            | Drama|Mystery|Thriller         | 0.2293           | 0.7707           |
-| 3  | Good, the Bad and the Ugly, The (Buono, il brutto, il cattivo, Il) (1966)        | Action|Adventure|Western       | 0.1592           | 0.8408           |
-| 4  | Sound of Music, The (1965)                                                       | Musical|Romance               | 0.1866           | 0.8134           |
-| 5  | Hoop Dreams (1994)                                                               | Documentary                    | 0.1133           | 0.8867           |
-| 6  | Alien (1979)                                                                     | Horror|Sci-Fi                  | 0.1572           | 0.8428           |
-| 7  | Piper (2016)                                                                     | Animation                      | 0.2249           | 0.7751           |
-| 8  | Fantastic Beasts and Where to Find Them (2016)                                   | Fantasy                        | 0.0442           | 0.9558           |
-| 9  | Run Silent Run Deep (1958)                                                       | War                            | 0.1491           | 0.8509           |
-| 10 | Hereditary (2018)                                                                | (no genres listed)             | 0.1329           | 0.8671           |
-
+     
+        | No   | Judul Film                                                       | Genre                     | Mean Similarity | Diversity Score |
+        |------|------------------------------------------------------------------|---------------------------|-----------------|-----------------|
+        | 1    | Sting, The (1973)                                                | Comedy\|Crime             | 0.1972          | 0.8028          |
+        | 2    | Shutter Island (2010)                                            | Drama\|Mystery\|Thriller  | 0.2293          | 0.7707          |
+        | 3    | Good, the Bad and the Ugly, The (Buono, il brutto, il cattivo) (1966) | Action\|Adventure\|Western | 0.1592          | 0.8408          |
+        | 4    | Sound of Music, The (1965)                                       | Musical\|Romance          | 0.1866          | 0.8134          |
+        | 5    | Hoop Dreams (1994)                                               | Documentary               | 0.1133          | 0.8867          |
+        | 6    | Alien (1979)                                                    | Horror\|Sci-Fi             | 0.1572          | 0.8428          |
+        | 7    | Piper (2016)                                                    | Animation                 | 0.2249          | 0.7751          |
+        | 8    | Fantastic Beasts and Where to Find Them (2016)                   | Fantasy                   | 0.0442          | 0.9558          |
+        | 9    | Run Silent Run Deep (1958)                                       | War                       | 0.1491          | 0.8509          |
+        | 10   | Hereditary (2018)                                               | (no genres listed)         | 0.1329          | 0.8671          |
 
         Model ini menghasilkan Top-10 rekomendasi film untuk user 6752 , yang sebelumnya telah menonton 10 film salah satunya 10,000 BC (2008) dengan genre Adventure|Romance|Thriller. Rekomendasi mencakup film dari berbagai genre seperti Drama, Mystery, Action, Adventure hingga genre yang tidak diketahui genrenya ini karena selain genre model juga mengambil dan mempertimbangkan fitur lain seperti rating untuk memastikan variasi dan relevansi yang tinggi. Setiap film disertai dengan skor similarity antar film, serta diversity score untuk menunjukkan keberagaman konten rekomendasi.
 
@@ -742,7 +748,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
         - Menangkap hubungan kompleks antara pengguna dan film yang tidak tergambar hanya dari data yang besar.
         - Dapat mempelajari pola implisit dari interaksi rating dalam skala besar.
         - Dukungan fleksibilitas tinggi dengan optimasi dan teknik regularisasi modern.
-        
+     
         Kekurangan CF
         - Cold-start problem: Tidak dapat merekomendasikan dengan baik untuk pengguna/film baru yang belum punya interaksi. Karena prediksinya berbasis interaksi pengguna lain.
         - Butuh banyak data: Performanya tinggi jika data interaksi pengguna cukup besar.
@@ -753,12 +759,22 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
    Hybrid recommendation menggabungkan dua pendekatan utama dalam sistem rekomendasi yaitu Content-Based Filtering (CBF) dan Collaborative Filtering (CF). Tujuannya adalah memanfaatkan kelebihan kedua metode agar menghasilkan rekomendasi yang lebih akurat, relevan, dan beragam.
 
    **Arsitektur Model Hybrid**
+   - **Content-Based Filtering (CBF)** :
+       - Mengukur kemiripan antar film berdasarkan fitur konten seperti judul dan genre. <br> Menghitung skor kemiripan film yang telah ditonton pengguna.
+       - Memberi penalti pada film populer untuk meningkatkan novelty.
+   - **Collaborative Filtering (CF)** :
+       - Menggunakan model deep learning dengan pola user & item embedding untuk memprediksi rating.
+       - Menerapkan penalti pada film populer agar rekomendasi lebih beragam.
 
-      | **Komponen**                      | **Fungsi**                                                                                                                                                                                                           | **Catatan / Parameter**                              |
-      | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-      | **Content-Based Filtering (CBF)** | Mengukur kemiripan antar film berdasarkan fitur konten seperti judul dan genre. <br> Menghitung skor kemiripan film yang telah ditonton pengguna. <br> Memberi penalti pada film populer untuk meningkatkan novelty. | Bobot kontribusi: 40%<br>Fitur: judul, genre         |
-      | **Collaborative Filtering (CF)**  | Menggunakan model deep learning dengan pola user & item embedding untuk memprediksi rating. <br> Menerapkan penalti pada film populer agar rekomendasi lebih beragam.                                                     | Bobot kontribusi: 60%<br>Model: deep learning        |
-      | **Hybrid Fusion**                 | Menggabungkan skor dari CBF dan CF berdasarkan bobot. <br> Melakukan normalisasi skor ke dua metode sebelum penggabungan agar setara. <br> Menghasilkan ranking akhir film sebagai rekomendasi.                                                | `weight_cbf = 40` (sisanya CF)<br>Skor dinormalisasi |
+    | Parameter / Komponen     | Fungsi                                                                 | Nilai / Catatan                        |
+    |--------------------------|------------------------------------------------------------------------|----------------------------------------|
+    | `user_id`                | ID pengguna untuk rekomendasi                                          | Input utama pengguna                   |
+    | `user_movie_titles`      | Daftar film yang sudah ditonton user                                   | Input untuk Content-Based Filtering    |
+    | `cosine_sim_df`          | Matriks kemiripan antar film (judul + genre)                           | Digunakan dalam perhitungan CBF        |
+    | `model`                  | Model Collaborative Filtering                                          | Memperkirakan preferensi user          |
+    | `weight_cbf`             | Bobot kontribusi Content-Based Filtering                               | Default: `0.4`                         |
+    | `weight_cf`              | Bobot kontribusi Collaborative Filtering (`1 - weight_cbf`)            | Default: `0.6`                         |
+    | `global_counter`         | Mencatat frekuensi film direkomendasikan                               | Digunakan untuk evaluasi diversitas    |
 
    **Note :
 
@@ -775,21 +791,21 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
    - Penggabungan Skor
 
      Skor CBF dan CF yang sudah dinormalisasi kemudian digabungkan dengan bobot tertentu (misal weight_cbf=0.5) untuk menghasilkan skor akhir rekomendasi film.
+   
    **Output TOP N Rekomendasi  Hybrid**
-
-     | **Title**                                 | **#Times Recommended** | **Mean ILS** | **Diversity Score** | **Genre**                   | **Feature Dominance** |
-| ----------------------------------------- | ---------------------- | ------------ | ------------------- | --------------------------- | --------------------- |
-| Mission: Impossible - Rogue Nation (2015) | 2                      | 0.1358       | 0.8642              | Action\|Adventure\|Thriller | CF                    |
-| True Grit (1969)                          | 2                      | 0.0982       | 0.9018              | Adventure\|Drama\|Western   | CF                    |
-| Mission: Impossible III (2006)            | 2                      | 0.1358       | 0.8642              | Action\|Adventure\|Thriller | CF                    |
-| Mission: Impossible - Fallout (2018)      | 2                      | 0.1358       | 0.8642              | Action\|Adventure\|Thriller | CF                    |
-| Gladiator (1992)                          | 2                      | 0.1215       | 0.8785              | Action\|Drama               | CF                    |
-| Sabrina (1954)                            | 2                      | 0.1652       | 0.8348              | Comedy\|Romance             | CF                    |
-| True Crime (1999)                         | 2                      | 0.1159       | 0.8841              | Crime\|Thriller             | CF                    |
-| 2048: Nowhere to Run (2017)               | 1                      | 0.4234       | 0.5766              | Sci-Fi\|Thriller            | CF                    |
-| Roger & Me (1989)                         | 1                      | 0.1133       | 0.8867              | Documentary                 | CF                    |
-| The Beauty Inside (2015)                  | 1                      | 0.1377       | 0.8623              | Fantasy\|Romance            | CF                    |
-
+   
+   | Title                                     | #Times Recommended | Mean ILS | Diversity Score | Genre                       | Feature Dominance |
+   |-------------------------------------------|--------------------|----------|-----------------|-----------------------------|-------------------|
+   | Mission: Impossible - Rogue Nation (2015) | 2                  | 0.1358   | 0.8642          | Action\|Adventure\|Thriller | CF                |
+   | True Grit (1969)                          | 2                  | 0.0982   | 0.9018          | Adventure\|Drama\|Western   | CF                |
+   | Mission: Impossible III (2006)            | 2                  | 0.1358   | 0.8642          | Action\|Adventure\|Thriller | CF                |
+   | Mission: Impossible - Fallout (2018)      | 2                  | 0.1358   | 0.8642          | Action\|Adventure\|Thriller | CF                |
+   | Gladiator (1992)                          | 2                  | 0.1215   | 0.8785          | Action\|Drama               | CF                |
+   | Sabrina (1954)                            | 2                  | 0.1652   | 0.8348          | Comedy\|Romance             | CF                |
+   | True Crime (1999)                         | 2                  | 0.1159   | 0.8841          | Crime\|Thriller             | CF                |
+   | 2048: Nowhere to Run (2017)               | 1                  | 0.4234   | 0.5766          | Sci-Fi\|Thriller            | CF                |
+   | Roger & Me (1989)                         | 1                  | 0.1133   | 0.8867          | Documentary                 | CF                |
+   | The Beauty Inside (2015)                  | 1                  | 0.1377   | 0.8623          | Fantasy\|Romance            | CF                |
   
 Setiap film yang direkomendasikan dievaluasi dengan metrik:
   - ILS (Intra-List Similarity) untuk mengukur kemiripan antar film dalam daftar rekomendasi (nilai rendah = rekomendasi lebih beragam).
@@ -834,9 +850,9 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
     - Nilai diversity tinggi → rekomendasi sangat beragam
     - Nilai diversity rendah → rekomendasi cenderung mirip satu sama lain
 
-  <br>
+  
   Contoh hubungan ILS dan Diversity
-  <br>
+  
   | **Mean Similarity (ILS)** | **Diversity Score (1 - ILS)** |
   | ------------------------- | ----------------------------- |
   | 1.00                      | 0.00                          |
