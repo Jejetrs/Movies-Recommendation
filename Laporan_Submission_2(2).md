@@ -136,22 +136,21 @@ EDA dilakukan menggunakan visualisasi distribusi, korelasi antar fitur, dan dete
 - Distribusi Rating Film
   - Analisis terhadap kolom `rating` menunjukkan bahwa skor bervariasi antara 0.5 hingga 5.0 dengan interval 0.5. Statistik deskriptifnya sebagai berikut:
 
-  Distribusi frekuensi nilai rating:
+    Distribusi frekuensi nilai rating:
+    | Rating | Jumlah     |
+    |--------|------------|
+    | 0.5    | 393,068    |
+    | 1.0    | 776,815    |
+    | 1.5    | 399,490    |
+    | 2.0    | 1,640,868  |
+    | 2.5    | 1,262,797  |
+    | 3.0    | 4,896,928  |
+    | 3.5    | 3,177,318  |
+    | 4.0    | 6,639,798  |
+    | 4.5    | 2,200,539  |
+    | 5.0    | 3,612,474  |
 
-  | Rating | Jumlah     |
-  |--------|------------|
-  | 0.5    | 393,068    |
-  | 1.0    | 776,815    |
-  | 1.5    | 399,490    |
-  | 2.0    | 1,640,868  |
-  | 2.5    | 1,262,797  |
-  | 3.0    | 4,896,928  |
-  | 3.5    | 3,177,318  |
-  | 4.0    | 6,639,798  |
-  | 4.5    | 2,200,539  |
-  | 5.0    | 3,612,474  |
-
-![distribusi_rating](https://github.com/user-attachments/assets/8dfa1b82-1055-4b3c-b6c5-2bdf324bef52)
+    ![distribusi_rating](https://github.com/user-attachments/assets/8dfa1b82-1055-4b3c-b6c5-2bdf324bef52)
 
   - Grafik menunjukkan distribusi rating film dari dataset. Beberapa poin penting yang dapat diamati:
     - Rentang rating berkisar antara 0 hingga 5.
@@ -179,14 +178,13 @@ EDA dilakukan menggunakan visualisasi distribusi, korelasi antar fitur, dan dete
 - Statistik Rating Rata-rata per Film
 
   - Dihitung nilai rata-rata rating dan jumlah rating per film untuk melihat popularitas dan persepsi kualitas film:
-
-  | Judul Film                       | Average Rating | Jumlah Rating |
-  |----------------------------------|----------------|----------------|
-  | The Shawshank Redemption (1994)  | 4.41           | 81,482         |
-  | Schindler's List (1993)          | 4.24           | 60,411         |
-  | Fight Club (1999)                | 4.22           | 58,773         |
-  | The Matrix (1999)                | 4.15           | 72,674         |
-  | Pulp Fiction (1994)              | 4.18           | 79,672         |
+    | Judul Film                       | Average Rating | Jumlah Rating |
+    |----------------------------------|----------------|----------------|
+    | The Shawshank Redemption (1994)  | 4.41           | 81,482         |
+    | Schindler's List (1993)          | 4.24           | 60,411         |
+    | Fight Club (1999)                | 4.22           | 58,773         |
+    | The Matrix (1999)                | 4.15           | 72,674         |
+    | Pulp Fiction (1994)              | 4.18           | 79,672         |
 
   - **insight** : Rating rata-rata yang tinggi **dan** jumlah rating yang besar menjadi indikasi kuat bahwa film tersebut **populer dan berkualitas**. Ini dapat dimanfaatkan dalam sistem rekomendasi dengan pendekatan **popularity-based hybrid filtering**.
 
@@ -202,8 +200,8 @@ EDA dilakukan menggunakan visualisasi distribusi, korelasi antar fitur, dan dete
         - Drama merupakan genre dengan jumlah film terbanyak, diikuti oleh Comedy, Thriller, dan Romance.
         - Genre seperti Musical, Film-Noir, dan IMAX memiliki jumlah film yang jauh lebih sedikit.
         - Terdapat kategori “(no genres listed)” yang menunjukkan adanya film tanpa label genre — ini perlu ditangani dalam tahap preprocessing.
-  
-![distribusi_genre_film](https://github.com/user-attachments/assets/60b2b2d9-07a2-440a-be3d-e48cbca38880)
+
+  ![distribusi_genre_film](https://github.com/user-attachments/assets/60b2b2d9-07a2-440a-be3d-e48cbca38880)
 
 - ✅ Insight Keseluruhan Univariate
   - Rating cenderung positif dengan dominasi skor 3.0–4.0.
@@ -219,8 +217,8 @@ Beberapa hal yang dilihat pada tahap ini :
 - Analisis untuk melihat hubungan antara **popularitas sebuah film** (diukur dari jumlah rating) dengan **persepsi kualitas** (diukur dari rata-rata rating).
 - Plot persebaran rata-rata rating terhadap jumlah rating setiap film.
 
-![rata-rata_ratin_vs_jumlah_rating](https://github.com/user-attachments/assets/df6e4023-8666-4c7e-b1a9-a4e5b090474b)
-![rating_jumlah_genre](https://github.com/user-attachments/assets/c4090b0a-27ec-42ff-b5bb-7cb181a576fd)
+  ![rata-rata_ratin_vs_jumlah_rating](https://github.com/user-attachments/assets/df6e4023-8666-4c7e-b1a9-a4e5b090474b)
+  ![rating_jumlah_genre](https://github.com/user-attachments/assets/c4090b0a-27ec-42ff-b5bb-7cb181a576fd)
 
 Interpretasi :
 - Genre Terpopuler: Drama dan Comedy mendominasi jumlah rating, cocok untuk pengguna baru.
@@ -237,61 +235,59 @@ Pada tahap ini, dilakukan beberapa proses penting untuk menyiapkan data sebelum 
 1. Penggabungan Data ratings_df dan movies_df
 
     Data ratings_df dan movies_df digabungkan berdasarkan kolom movieId menggunakan metode merge dengan join tipe left. Tujuannya agar setiap rating yang diberikan oleh pengguna dapat dihubungkan dengan informasi film seperti judul dan genre.
+   ```python
+   merged_df = pd.merge(ratings_df, movies_df, on='movieId', how='left')
+   ```
 
- ```python
-merged_df = pd.merge(ratings_df, movies_df, on='movieId', how='left')
- ```
-
-2. Pengecekan Missing Value dan Duplikasi
+3. Pengecekan Missing Value dan Duplikasi
 
     Dari pengecekan dapat dilihat tidak ada missing value dan duplikasi data terutama pada fitur userId dan movieId yang nantinya diutamakan untuk pembuatan model.
 
- ```python
-missing_percentage = merged_df.isnull().mean() * 100
-merged_duplicates = merged_df.duplicated().sum()
-duplicate_ratings = merged_df.duplicated(subset=['userId', 'movieId']).sum()
- ```
+   ```python
+    missing_percentage = merged_df.isnull().mean() * 100
+    merged_duplicates = merged_df.duplicated().sum()
+    duplicate_ratings = merged_df.duplicated(subset=['userId', 'movieId']).sum()
+   ```
 
-3. Sampling Data
+5. Sampling Data
 
     Dataset asli memiliki ukuran yang sangat besar, sehingga untuk efisiensi komputasi dan keterbatasan memori (RAM) di lingkungan pengolahan seperti Google Colab ataupun kaggle, dilakukan sampling acak sebanyak 200.000. Sampling ini dilakukan untuk menjaga agar proses pelatihan dan pengujian model tetap berjalan lancar dan efisien tanpa mengorbankan representasi data secara signifikan. Sampel ini cukup besar untuk mewakili variasi data asli.
 
- ```python
-sample_df = merged_df.sample(n=200_000, random_state=42).copy()
- ```
+   ```python
+    sample_df = merged_df.sample(n=200_000, random_state=42).copy()
+   ```
 
-4. Transformasi Fitur Genre
+7. Transformasi Fitur Genre
 
     Kolom genres yang berisi genre film dalam bentuk string dengan pemisah | diubah menjadi list menggunakan metode split, kemudian dipecah menjadi baris terpisah (explode). Langkah ini memudahkan analisis per genre dan pembuatan fitur berbasis genre.
 
- ```python
-sample_df['genres'] = sample_df['genres'].str.split('|')
-genre_exploded = sample_df.explode('genres')
- ```
+   ```python
+    sample_df['genres'] = sample_df['genres'].str.split('|')
+    genre_exploded = sample_df.explode('genres')
+   ```
 
-5. Visualisasi Heatmap Distribusi Rating per Genre
+9. Visualisasi Heatmap Distribusi Rating per Genre
 
     Visualisasi ini baru dapat dibuat dengan data sejumlah 200.000 yang sebelumnya error jika menggunakan keseluruhan data. Untuk melihat distribusi rating per genre, dilakukan kategorisasi rating ke dalam rentang (bins) dan dibuat pivot table untuk jumlah rating per kategori rating dan genre. Visualisasi heatmap membantu melihat pola distribusi.
-
- ```python
-  genre_exploded['rating_category'] = pd.cut(
-      genre_exploded['rating'],
-      bins=[0, 1, 2, 3, 4, 5],
-      labels=['0-1', '1-2', '2-3', '3-4', '4-5'],
-      include_lowest=True
-  )
- ```
-
- ```python
-  rating_pivot = filtered_genre.pivot_table(
-      index='genres',
-      columns='rating_category',
-      values='rating',
-      aggfunc='count',
-      fill_value=0,
-      observed=True
-  )
- ```
+   ```python
+   genre_exploded['rating_category'] = pd.cut(
+       genre_exploded['rating'],
+       bins=[0, 1, 2, 3, 4, 5],
+       labels=['0-1', '1-2', '2-3', '3-4', '4-5'],
+       include_lowest=True
+   )
+   ```
+   ```python
+   rating_pivot = filtered_genre.pivot_table(
+       index='genres',
+       columns='rating_category',
+       values='rating',
+       aggfunc='count',
+       fill_value=0,
+       observed=True
+   )
+   ```
+   
 <ins><strong>Preparation<ins><strong>
 
 1. Data Preparation untuk Model Content-Based
@@ -320,7 +316,6 @@ genre_exploded = sample_df.explode('genres')
     TF-IDF matrix yang terbentuk memiliki dimensi **[jumlah_film x jumlah_kata_unik]**, di mana setiap nilai menunjukkan pentingnya suatu kata dalam mendeskripsikan film tertentu.
 
 2. Data Preparation untuk Model Collaborative Filtering
-
 
     a. Encoding
 
@@ -398,9 +393,9 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
     )
     ```
    2. Output (Hasil Rekomendasi CBF)
-      
-   ```python
-    **Alur Rekomendasi**
+
+      ```python
+      **Alur Rekomendasi**
           +----------------------+
           | Mulai                |
           +----------+-----------+
@@ -465,7 +460,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
           +----------------------+
           | Selesai              |
           +----------------------+
-    ```
+      ```
       
     - Penalti Popularitas untuk Novelty
     
@@ -514,7 +509,7 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
      - Penalti popularitas membuat rekomendasi tidak didominasi film-film mainstream.
      - Penalti genre membuat rekomendasi beragam secara tema dan genre, sehingga user mendapat pilihan film yang kaya dan berwarna, tidak monoton.
      - Output menampilkan keseimbangan antara kedekatan film utama dan keberagaman rekomendasi.
-     -
+     
    Kelebihan CBF
    - Personal dan spesifik: Rekomendasi sepenuhnya disesuaikan dengan preferensi unik pengguna.
    - Tidak butuh data pengguna lain: Model tetap bekerja meskipun pengguna adalah satu-satunya di sistem.
@@ -533,14 +528,13 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
 
    Model ini menggunakan arsitektur **RecommenderNet** dengan pendekatan neural collaborative filtering, dengan komponen utama (parameter) sebagai berikut:
 
-   | **Komponen**                     | **Fungsi**                                                                                                                                                                                                   |
-  | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-  | **Embedding**                    | Mengubah ID pengguna dan ID film menjadi vektor berdimensi 150 di ruang laten. Vektor ini mencerminkan karakteristik tersembunyi (laten) yang dipelajari dari data rating.                                       |
-  | **User Bias & Movie Bias**       | Menangkap kecenderungan pengguna dalam memberi rating (tinggi/rendah) dan kecenderungan film (umumnya disukai atau tidak). Komponen ini membantu meningkatkan akurasi prediksi.                                  |
-  | **Dot Product**                  | Menghitung kecocokan antara pengguna dan film dengan menjumlahkan hasil perkalian elemen-elemen embedding pengguna dan film. Semakin tinggi hasilnya, semakin besar kemungkinan pengguna menyukai film tersebut. |
-  | **Dropout Layer**                | Digunakan untuk mengurangi risiko overfitting, terutama dalam proses pelatihan embedding dengan cara menonaktifkan sebagian neuron secara acak saat training.                                                    |
-  | **Activation Function: Sigmoid** | Karena rating dinormalisasi ke rentang \[0,1], sigmoid digunakan agar output prediksi tetap dalam rentang tersebut, menjadikannya cocok untuk regresi nilai rating.                                              |
-
+   | **Komponen**                     | **Fungsi**                                                                                                                                                                                                       |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Embedding**                    | Mengubah ID pengguna dan ID film menjadi vektor berdimensi 150 di ruang laten. Vektor ini mencerminkan karakteristik tersembunyi (laten) yang dipelajari dari data rating.                                       |
+| **User Bias & Movie Bias**       | Menangkap kecenderungan pengguna dalam memberi rating (tinggi/rendah) dan kecenderungan film (umumnya disukai atau tidak). Komponen ini membantu meningkatkan akurasi prediksi.                                  |
+| **Dot Product**                  | Menghitung kecocokan antara pengguna dan film dengan menjumlahkan hasil perkalian elemen-elemen embedding pengguna dan film. Semakin tinggi hasilnya, semakin besar kemungkinan pengguna menyukai film tersebut. |
+| **Dropout Layer**                | Digunakan untuk mengurangi risiko overfitting, terutama dalam proses pelatihan embedding dengan cara menonaktifkan sebagian neuron secara acak saat training.                                                    |
+| **Activation Function: Sigmoid** | Karena rating dinormalisasi ke rentang \[0,1], sigmoid digunakan agar output prediksi tetap dalam rentang tersebut, menjadikannya cocok untuk regresi nilai rating.                                              |
 
     **Proses Modeling**
 
@@ -639,9 +633,9 @@ Tujuan penggunaan ketiga pendekatan model ini adalah untuk melakukan evaluasi da
       
    6. Evaluasi Metrik
       - Grafik menunjukkan penurunan RMSE yang stabil pada data training dan validation.
-     - Train RMSE menurun signifikan dari awal hingga epoch 8, menunjukkan model belajar dengan baik dari data.
-     - Val RMSE juga menurun, meskipun lebih lambat, tanpa indikasi overfitting (tidak ada kenaikan drastis pada Val RMSE).
-     - Gap Train-Val RMSE relatif kecil, menunjukkan model cukup stabil dan generalizable untuk data baru.
+      - Train RMSE menurun signifikan dari awal hingga epoch 8, menunjukkan model belajar dengan baik dari data.
+      - Val RMSE juga menurun, meskipun lebih lambat, tanpa indikasi overfitting (tidak ada kenaikan drastis pada Val RMSE).
+      - Gap Train-Val RMSE relatif kecil, menunjukkan model cukup stabil dan generalizable untuk data baru.
      - Secara keseluruhan, model Collaborative Filtering ini menunjukkan performa yang baik dan tidak overfit terhadap data training.
     
         ![model_metrik](https://github.com/user-attachments/assets/80298756-31cb-49b0-84dd-5d2ec3e77be9)
