@@ -866,12 +866,12 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
 
 ### HASIL EVALUASI MODEL
 <br>
+
 | Model  | Mean Similarity (ILS) ↓ | Diversity Score ↑    | Coverage ↑          |
 | ------ | ----------------------- | -------------------- | ------------------- |
 | CBF    | 0.1261 ❌ (tertinggi)    | 0.8739 ❌             | 0.7428 ✅            |
 | CF     | 0.0234 ✅ (terendah)     | 0.9766 ✅ (tertinggi) | 0.5304 ❌ (terendah) |
 | Hybrid | 0.0894 ⚖️ (sedang)      | 0.9106 ⚖️            | 0.7472 ✅            |
-<br>
 
 **INSIGHT MODEL**
 - CBF memberikan cakupan rekomendasi yang luas, tetapi filmnya cenderung mirip satu sama lain.
@@ -923,19 +923,19 @@ Pada proyek sistem rekomendasi film ini, saya menggunakan tiga model utama: Cont
 
 1. **Goal 1: Menyajikan rekomendasi film yang relevan berdasarkan riwayat tontonan pengguna.**
 
-Model hybrid berhasil memberikan rekomendasi yang relevan dengan preferensi pengguna, memanfaatkan keunggulan Content-Based Filtering untuk memahami kesamaan konten film (genre, judul) dan Collaborative Filtering untuk mempelajari pola interaksi pengguna. Model ini menghasilkan rekomendasi yang personal dan relevan, mendukung pengguna dalam menemukan film sesuai minat mereka.
+   Model hybrid berhasil memberikan rekomendasi yang relevan dengan preferensi pengguna, memanfaatkan keunggulan Content-Based Filtering untuk memahami kesamaan konten film (genre, judul) dan Collaborative Filtering untuk mempelajari pola interaksi pengguna. Model ini menghasilkan rekomendasi yang personal dan relevan, mendukung pengguna dalam menemukan film sesuai minat mereka.
 
 2. **Goal 2: Memperluas jangkauan rekomendasi agar tidak hanya mencakup film populer, namun juga film yang kurang dikenal.**
 
-Hybrid model dengan penalti popularitas berhasil meningkatkan novelty rekomendasi dengan memberikan peluang lebih besar bagi film non populer untuk muncul dalam daftar rekomendasi. Film non-populer tetap mendapat kesempatan muncul di daftar rekomendasi, dapat dilihat dari score coverage meningkat ke 0.7472. Ini membantu platform mengekspos lebih banyak konten dari katalog.
+   Hybrid model dengan penalti popularitas berhasil meningkatkan novelty rekomendasi dengan memberikan peluang lebih besar bagi film non populer untuk muncul dalam daftar rekomendasi. Film non-populer tetap mendapat kesempatan muncul di daftar rekomendasi, dapat dilihat dari score coverage meningkat ke 0.7472. Ini membantu platform mengekspos lebih banyak konten dari katalog.
 
 3. **Goal 3: Menghadirkan unsur kebaruan (novelty) dalam rekomendasi untuk menawarkan film baru (belum pernah di tonton pengguna).**
-
-Melalui proses reranking dengan penalti genre, sistem rekomendasi mampu mengurangi dominasi genre tertentu dan menyajikan daftar rekomendasi yang lebih bervariasi. Diversity score yang tinggi (0.9106) pada model hybrid menunjukkan bahwa pengguna menerima rekomendasi dari berbagai genre dan tema, sehingga pengalaman eksplorasi film menjadi lebih menarik dan tidak monoton.
+  
+   Melalui proses reranking dengan penalti genre, sistem rekomendasi mampu mengurangi dominasi genre tertentu dan menyajikan daftar rekomendasi yang lebih bervariasi. Diversity score yang tinggi (0.9106) pada model hybrid menunjukkan bahwa pengguna menerima rekomendasi dari berbagai genre dan tema, sehingga pengalaman eksplorasi film menjadi lebih menarik dan tidak monoton.
 
 4. **Goal 4: Mengembangkan mekanisme rekomendasi yang mampu mengidentifikasi dan menyarankan film-film dengan tingkat interaksi rendah namun relevan bagi pengguna,...**
 
-Hybrid model berhasil memadukan keunggulan CBF (berfungsi optimal pada item cold-start) dan CF (memberikan konteks pola pengguna lain) untuk memberikan rekomendasi pada film-film dengan data interaksi rendah (long-tail items) yang relevan dengan minat pengguna. Evaluasi menggunakan metrik Mean Similarity, Diversity, dan Coverage menunjukkan bahwa Hybrid model menunjukkan keseimbangan antara relevansi, keragaman, dan cakupan—kriteria utama dalam recommender system yang kuat dan adaptif terhadap konteks bisnis.
+   Hybrid model berhasil memadukan keunggulan CBF (berfungsi optimal pada item cold-start) dan CF (memberikan konteks pola pengguna lain) untuk memberikan rekomendasi pada film-film dengan data interaksi rendah (long-tail items) yang relevan dengan minat pengguna. Evaluasi menggunakan metrik Mean Similarity, Diversity, dan Coverage menunjukkan bahwa Hybrid model menunjukkan keseimbangan antara relevansi, keragaman, dan cakupan—kriteria utama dalam recommender system yang kuat dan adaptif terhadap konteks bisnis.
 <br>
 
 <ins><strong>Dampak SOLUSI STATEMENT<ins><strong>
@@ -955,8 +955,8 @@ Untuk mewujudkan tujuan proyek, pendekatan yang digunakan adalah sebagai berikut
    Menghasilkan model yang mampu menangkap preferensi tersembunyi (Implisit Preference) berdasarkan interaksi. CF memungkinkan sistem mengenali pola kesukaan pengguna berdasarkan perilaku kolektif pengguna lain.
 
 4. Membangun model **Hybrid** untuk optimalisasi model gabungan.
-  
-  Model ini tidak hanya mengulang rekomendasi yang mirip atau populer, tapi dengan optimalisasi model yang ada juga mendorong penemuan konten baru yang sesuai preferensi pengguna.
+
+   Model ini tidak hanya mengulang rekomendasi yang mirip atau populer, tapi dengan optimalisasi model yang ada juga mendorong penemuan konten baru yang sesuai preferensi pengguna.
 
 5. Menggunakan metrik evaluasi:  
   - **Mean Similarity (ILS):** Menilai homogenitas antar film dalam daftar rekomendasi.
@@ -968,10 +968,10 @@ Untuk mewujudkan tujuan proyek, pendekatan yang digunakan adalah sebagai berikut
       3. Mengukur seberapa luas sistem menjelajahi katalog film. Coverage tinggi berarti lebih banyak film berpeluang direkomendasikan, bukan hanya yang populer.
 
 6. Menambahkan **penalti popularitas** pada film populer untuk meningkatkan eksplorasi terhadap film kurang dikenal yang tetap relevan.
-  
-  Mengurangi Bias ke Film Populer dan meningkatkan ekplorasi. Memperkenalkan film long-tail yang mungkin relevan tapi jarang muncul karena jumlah interaksinya sedikit.
 
-7. Melakukan **reranking** dengan penalti genre serupa untuk meningkatkan diversity dalam daftar rekomendasi, sehingga pengguna mendapatkan kombinasi film yang tidak hanya relevan, tapi juga segar dan bervariasi, memperkaya pengalaman eksplorasi konten.
+   Mengurangi Bias ke Film Populer dan meningkatkan ekplorasi. Memperkenalkan film long-tail yang mungkin relevan tapi jarang muncul karena jumlah interaksinya sedikit.
+
+8. Melakukan **reranking** dengan penalti genre serupa untuk meningkatkan diversity dalam daftar rekomendasi, sehingga pengguna mendapatkan kombinasi film yang tidak hanya relevan, tapi juga segar dan bervariasi, memperkaya pengalaman eksplorasi konten.
    - Menghindari dominasi genre tertentu dalam rekomendasi.
    - Pengguna mendapatkan daftar film dari genre yang beragam namun tetap relevan, mendorong eksplorasi lebih luas.
    - Memberikan kombinasi rekomendasi yang bersifat personal, baru, dan tidak repetitif.
